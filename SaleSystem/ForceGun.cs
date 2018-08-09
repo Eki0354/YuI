@@ -124,8 +124,7 @@ namespace SaleSystem
             string strResult = Encoding.ASCII.GetString(m_recvBytes, 0, m_recvBytes.Length);//对数据进行转换  
             _serialPort.DiscardInBuffer();
 
-            if (this.DataReceived != null)
-                this.DataReceived(this, new SerialSortEventArgs() { Code = strResult });
+            this.DataReceived?.Invoke(this, new SerialSortEventArgs() { Code = strResult });
         }
 
         public event EventHandler<SerialSortEventArgs> DataReceived;

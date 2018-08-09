@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Reservation")]
+[assembly: AssemblyTitle("ControlItemCollection")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Reservation")]
+[assembly: AssemblyProduct("ControlItemCollection")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("7be3b04e-5e44-4637-84b9-39dd9879883a")]
+[assembly: Guid("e6895669-1fdc-429f-8a96-7c5ea37dc5fb")]
 
 // 程序集的版本信息由下列四个值组成: 
 //

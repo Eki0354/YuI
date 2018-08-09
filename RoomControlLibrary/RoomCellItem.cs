@@ -16,7 +16,7 @@ namespace RoomCell
             Initialize();
             if (r != null)
             {
-                Items.ForEach(x => x.SetValue(r[x.Key()]));
+                _items.ForEach(x => x.SetValue(r[x.Key()]));
             }
         }
         public RoomCellItemCollection(int number, DateTime date) : base("info_room", "Number")
@@ -26,12 +26,12 @@ namespace RoomCell
         }
         void Initialize()
         {
-            Items.Add(new EDBIntegerItem("Number"));
-            Items.Add(new EDBByteItem("Type"));
-            Items.Add(new EDBStringItem("Order"));
-            Items.Add(new EDBStringItem("UID"));
-            Items.Add(new EDBStringItem("Channel"));
-            Items.Add(new EDBStringItem("Name"));
+            _items.Add(new EDBIntegerItem("Number"));
+            _items.Add(new EDBByteItem("Type"));
+            _items.Add(new EDBStringItem("Order"));
+            _items.Add(new EDBStringItem("UID"));
+            _items.Add(new EDBStringItem("Channel"));
+            _items.Add(new EDBStringItem("Name"));
         }
     }
 }

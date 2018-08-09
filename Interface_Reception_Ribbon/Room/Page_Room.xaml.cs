@@ -13,8 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
-using System.Data.OleDb;
 using Interface_Reception_Ribbon.Room;
+using ELite;
 
 
 namespace Interface_Reception_Ribbon
@@ -26,24 +26,15 @@ namespace Interface_Reception_Ribbon
     {
         #region PROPERTY
 
-        public static OleDbConnection _RoomConn;
-        DateTime _date_selected_start;
-        DateTime _date_selected_end;
+        private static ELiteConnection _Conn = MainWindow._Conn;
+        DateTime _Date_Selected_Start;
+        DateTime _Date_Selected_End;
 
         #endregion
 
         public Page_Room()
         {
             InitializeComponent();
-            InitializeConn();
-            _RoomConn.Open();
-        }
-
-        private void Page_Room_Closing(object sender, EventArgs e)
-        {
-            if (_RoomConn == null)
-                return;
-            _RoomConn.Close();
         }
 
         #region DATAGRID
@@ -55,11 +46,11 @@ namespace Interface_Reception_Ribbon
         {
             if (dg_room == null)
                 return;
-            if (_date_selected_start == date_start && _date_selected_end == date_end)
+            if (_Date_Selected_Start == date_start && _Date_Selected_End == date_end)
                 return;
-            _date_selected_start = date_start;
-            _date_selected_end = date_end;
-            UpdateSEDataTable(_date_selected_start, _date_selected_end);
+            _Date_Selected_Start = date_start;
+            _Date_Selected_End = date_end;
+            UpdateSEDataTable(_Date_Selected_Start, _Date_Selected_End);
             dg_room.ItemsSource = _seDataTable.DefaultView;
         }
 
@@ -72,13 +63,7 @@ namespace Interface_Reception_Ribbon
 
         #region CONN
 
-        private void InitializeConn()
-        {
-            string path = Environment.CurrentDirectory + "\\database\\rs.mdb";
-            _RoomConn = new OleDbConnection();
-            _RoomConn.ConnectionString = "Provider=Microsoft.Jet.OleDb.4.0;Data Source=" + path + 
-                ";Jet Oledb:DataBase Password=Eki20150613";
-        }
+        
 
 
         #endregion

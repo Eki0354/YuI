@@ -31,6 +31,7 @@ namespace Interface_Reception_Ribbon
         public Page_Sale()
         {
             InitializeComponent();
+            return;
             OpenOleDb();
             _sf = new SaleFairy(_conn);
             lable_leftItemCount.DataContext = _sf;
@@ -46,6 +47,7 @@ namespace Interface_Reception_Ribbon
 
         private void OpenOleDb()
         {
+
             OleDbConnectionStringBuilder oleStr = new OleDbConnectionStringBuilder();
             oleStr.Provider = "Microsoft.Jet.OleDB.4.0";
             oleStr.PersistSecurityInfo = true;

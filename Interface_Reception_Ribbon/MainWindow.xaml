@@ -6,7 +6,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Interface_Reception_Ribbon"
         mc:Ignorable="d"
-        MinHeight="625" MinWidth="833" Height="833" Width="1400" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        MinHeight="625" MinWidth="833" Height="833" Width="1400" WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="RibbonWindow_Closing">
     <!--WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="{x:Static shell:WindowChrome.GlassFrameCompleteThickness}" />
     </!-->
@@ -34,7 +34,7 @@
                     <RibbonApplicationMenuItem x:Name="menu_saveas" Header="{DynamicResource text_button_saveas}"/>
                     <RibbonApplicationMenuItem x:Name="menu_printpanel" Header="{DynamicResource text_button_printpanel}"/>
                     <RibbonSeparator/>
-                    <RibbonApplicationMenuItem x:Name="menu_options" Header="{DynamicResource text_button_options}"/>
+                    <RibbonApplicationMenuItem x:Name="menu_options" Header="{DynamicResource text_button_options}" Click="menu_options_Click"/>
                     <RibbonSeparator/>
                     <RibbonApplicationMenuItem x:Name="menu_exit" Header="{DynamicResource text_button_exit}"/>
                 </RibbonApplicationMenu>
@@ -44,6 +44,7 @@
                     <WrapPanel Orientation="Vertical" >
                         <RibbonRadioButton x:Name="button_view_excel" KeyTip="E" Label="{DynamicResource text_button_view_excel}" IsChecked="True"/>
                         <RibbonRadioButton x:Name="button_view_bytype" KeyTip="T" Label="{DynamicResource text_button_view_bytype}"/>
+                        <RibbonButton x:Name="button_test" Label="新建配置" Click="button_test_Click"/>
                     </WrapPanel>
                 </RibbonGroup>
                 <RibbonGroup Header="{DynamicResource text_group_roominfos_title}" KeyTip="R">
@@ -111,31 +112,6 @@
                     <RibbonButton x:Name="button_view_dailyroomstatus" Label="{DynamicResource text_button_view_dailyroomstatus}" LargeImageSource="Images/dailyroomstatus.ico"/>
                 </RibbonGroup>
             </RibbonTab>
-            <RibbonTab x:Name="tab_web" Header="{DynamicResource text_tab_web_title}" KeyTip="W" Visibility="Hidden">
-                <RibbonGroup Header="{DynamicResource text_group_wo_title}">
-                    <RibbonSplitButton x:Name="button_web_open" Label="{DynamicResource text_button_wo_open}" LargeImageSource="Images/web_open.ico">
-                        <RibbonButton x:Name="button_web_email" Label="{DynamicResource text_button_wo_email}" SmallImageSource="Images/web_email.ico"/>
-                        <RibbonButton x:Name="button_web_booking_mp" Label="{DynamicResource text_button_wo_booking_mp}"/>
-                        <RibbonButton x:Name="button_web_booking_th" Label="{DynamicResource text_button_wo_booking_th}"/>
-                        <RibbonButton x:Name="button_web_qunar" Label="{DynamicResource text_button_wo_qunar}"/>
-                        <RibbonButton x:Name="button_web_elong" Label="{DynamicResource text_button_wo_elong}"/>
-                        <RibbonButton x:Name="button_web_gl" Label="{DynamicResource text_button_wo_gl}"/>
-                        <RibbonButton x:Name="button_web_mt" Label="{DynamicResource text_button_wo_mt}"/>
-                        <RibbonButton x:Name="button_web_hw" Label="{DynamicResource text_button_wo_hw}"/>
-                        <RibbonButton x:Name="button_web_agoda_mp" Label="{DynamicResource text_button_wo_agoda_mp}"/>
-                        <RibbonButton x:Name="button_web_agoda_th" Label="{DynamicResource text_button_wo_agoda_th}"/>
-                    </RibbonSplitButton>
-                    <RibbonButton x:Name="button_web_reset" LargeImageSource="Images/web_reset.ico" Label="{DynamicResource text_button_wo_reset}"/>
-                    <RibbonButton x:Name="RefreshWebPageButton" LargeImageSource="Images/web_refresh.ico" Label="{DynamicResource text_button_wo_refresh}"/>
-                    <RibbonButton x:Name="CloseWebPageButton" LargeImageSource="Images/web_close.ico" Label="{DynamicResource text_button_wo_close}"/>
-                </RibbonGroup>
-                <RibbonGroup Header="{DynamicResource text_group_cw_title}">
-                    <RibbonCheckBox x:Name="chb_auto_booking" Label="{DynamicResource text_checkbox_cw_auto_booking}" ToolTip="{DynamicResource tips_checkbox_cw_auto_booking}"/>
-                    <RibbonCheckBox x:Name="chb_auto_refresh" Label="{DynamicResource text_checkbox_cw_auto_refresh}" ToolTip="{DynamicResource tips_checkbox_cw_auto_refresh}"/>
-                    <RibbonCheckBox x:Name="chb_auto_email" Label="{DynamicResource text_checkbox_cw_auto_email}" ToolTip="{DynamicResource tips_checkbox_cw_auto_email}"/>
-                    <RibbonCheckBox x:Name="chb_auto_states" Label="{DynamicResource text_checkbox_cw_auto_states}" ToolTip="{DynamicResource tips_checkbox_cw_auto_states}"/>
-                </RibbonGroup>
-            </RibbonTab>
             <RibbonTab x:Name="tab_order" Header="{DynamicResource text_tab_order_title}" KeyTip="O" IsSelected="True">
                 <RibbonGroup Header="{DynamicResource text_group_normal_title}">
                     <RibbonButton x:Name="button_order_add" Label="{DynamicResource text_button_order_add}" LargeImageSource="Images/order_add.ico"/>
@@ -148,7 +124,7 @@
                             <Label Content="员工："/>
                             <RibbonComboBox x:Name="rcb_staff" IsReadOnly="True" Text="123">
                                 <RibbonGallery>
-                                    <RibbonGalleryCategory MaxColumnCount="1">
+                                    <RibbonGalleryCategory x:Name="rgc_staff" MaxColumnCount="1">
                                         <RibbonGalleryItem Content="Cindy" Width="80"/>
                                         <RibbonGalleryItem Content="Eki"/>
                                         <RibbonGalleryItem Content="Fifi"/>
@@ -170,6 +146,10 @@
                         <RibbonButton x:Name="rb_mark" Label="标记"/>
                         <RibbonButton x:Name="rb_copy" Label="复制详情"/>
                     </StackPanel>
+                </RibbonGroup>
+                <RibbonGroup x:Name="rg_quick" Header="快捷">
+                    <RibbonSplitButton x:Name="rsb_httpSites"/>
+                    <RibbonSplitButton x:Name="rsb_emailTemples"/>
                 </RibbonGroup>
             </RibbonTab>
             <RibbonTab x:Name="tab_sale" Header="{DynamicResource text_tab_sale_title}" KeyTip="S">
