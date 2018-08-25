@@ -21,8 +21,7 @@ using ELite;
 using EkiXmlDocument;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
-using ControlItemCollection;
-using Reservation;
+using ELite.Reservation;
 
 namespace Interface_Reception_Ribbon
 {
@@ -35,6 +34,8 @@ namespace Interface_Reception_Ribbon
 
         public static ELiteConnection _Conn;
         RibbonTab _SelectedRibbonTab = null;
+        ResAssist _ResAssist;
+        ResGetter _ResGetter;
 
         #endregion
 
@@ -94,12 +95,11 @@ namespace Interface_Reception_Ribbon
         /// <summary> 剪贴板内容改变具体响应，根据需求，程序仅对文字内容进行监视 </summary>
         void OnClipboardChanged()
         {
+            if (!Clipboard.ContainsText()) return;
             string text = Clipboard.GetText();
             if (string.IsNullOrEmpty(text)) return;
-            ListBoxResItem res = Getter.GetReservation(_Conn, text);
-            if (res == null) return;
-            //_pageRes.ResListBox.Items.Add(res);    //添加新订单
-            //_pageRes.ResListBox.SelectedItem = res;//自动选中新添加的订单项
+            ListBoxResItem res = _ResGetter.GetReservation(text);
+            if (res != null) _pageRes.AddNewRes(res);
             Clipboard.SetText(string.Empty);
         }
 
@@ -115,7 +115,9 @@ namespace Interface_Reception_Ribbon
             InitializeControls();
             _Conn = new ELiteConnection("", "eki", "db");
             _Conn.Open();
-            _pageRes.InitializeResListBox(_Conn.UncheckedResList());
+            _ResAssist = new ResAssist(_Conn);
+            _ResGetter = new ResGetter(_Conn);
+            _pageRes.InitializeResListBox(_ResAssist.UncheckedResList());
         }
 
         private void RibbonWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

@@ -29,20 +29,25 @@ namespace ELite
 
     public partial class ELiteConnection
     {
+        #region PROPERTY
+
         private SQLiteConnection _Conn;
         private SQLiteCommand _Comm;
         private SQLiteDataReader _DataReader;
         private string _Path;
-        private string _DBPath { get { return _Path + "\\database"; } }
+        private string _DBPath => _Path + "\\database";
         private string _Name;
         private string _Extension;
-        public string FullPath { get { return _DBPath + "\\" + _Name + "." + _Extension; } }
-        private string _BackUpPath { get { return _Path + "\\backup"; } }
+        public string FullName => _Name + "." + _Extension;
+        public string FullPath => _DBPath + "\\" + FullName;
+        private string _BackUpPath => _Path + "\\backup";
         private string _Password;
         private Logger _Logger;
         private EXmlReader _XmlReader;
         private StaffItem _Staff;
 
+        #endregion
+        
         #region BASE
 
         public ELiteConnection(string fullPath = "", string password = "")
@@ -52,6 +57,7 @@ namespace ELite
             Open();
             InitializeLogger();
             InitializeXmlReader();
+            InitializeChannels();
         }
 
         public ELiteConnection(string path, string name = "min",
@@ -62,6 +68,7 @@ namespace ELite
             Open();
             InitializeLogger();
             InitializeXmlReader();
+            InitializeChannels();
         }
 
         public void Open()
@@ -146,19 +153,19 @@ namespace ELite
 
         private void InitializeLogger()
         {
-            _Logger = new Logger(_DBPath, _Name + "." + _Extension);
+            _Logger = new Logger(_DBPath, FullName);
             _Logger.Open();
         }
 
         private void InitializeXmlReader()
         {
-            _XmlReader = new EXmlReader(_Path);
+            _XmlReader = new EXmlReader(_DBPath, FullName);
             _XmlReader.Open();
         }
 
         #endregion
 
-        #region USER
+        #region STAFF
 
         public void SetStaff(StaffItem staff)
         {
@@ -169,31 +176,29 @@ namespace ELite
 
         #region OPERATIONS_BASE
 
-        private object ReadValue(string table, string key)
+        public object ReadValue(string sqlString)
+        {
+            _Comm.CommandText = sqlString;
+            return _Comm.ExecuteScalar();
+        }
+
+        public object ReadValue(string table, string key)
         {
             string sqlString;
             sqlString = "select " + key + " from " + table + " order by id desc";
             _Comm.CommandText = sqlString;
             return _Comm.ExecuteScalar();
         }
-
-        private string ReadValue(string table, List<string> keys = null)
+        
+        public bool IsExisted(string sqlString)
         {
-            string sqlString;
-            if (keys == null || keys.Count == 0)
-                sqlString = "select * ";
-            else
-                sqlString = "select " + String.Join(",", keys.ToArray());
-            sqlString += " from " + table;
-            DataTable dt = Select(sqlString);
-            if (dt.Rows.Count < 1) return "";
-            DataRow row = dt.Rows[0];
-            string result = "";
-            for (int i = 0; i < dt.Columns.Count; i++)
-            {
-                result += row[i].ToString();
-            }
-            return result;
+            _Comm.CommandText = sqlString;
+            return _Comm.ExecuteNonQuery() > 0;
+        }
+
+        public bool IsExisted(string table, string condition)
+        {
+            return IsExisted("select * from " + table + " where " + condition);
         }
 
         private int MaxId(string table, string key = "id")
@@ -222,6 +227,7 @@ namespace ELite
 
         private void Run(string sql, Operation operation = Operation.RUN, string table = "")
         {
+            _Comm.Reset();
             _Comm.CommandText = sql;
             try
             {
@@ -281,107 +287,6 @@ namespace ELite
 
         #endregion
 
-        #region SELECT & Read
-
-        private SQLiteDataReader Read(string table, List<string> keys,
-            string key = "", object value = null, string condition = "", string orderKey = "")
-        {
-            if (table == null || table == "") return null;
-            string sqlString = GetSelectString(table, keys, key, value, condition, orderKey);
-            return Read(sqlString);
-        }
-
-        private string GetSelectString(string table, List<string> keys, string key,
-            object value, string condition, string orderKey)
-        {
-            string sqlString = "";
-            if (keys == null || keys.Count == 0)
-                sqlString = "select * from " + table;
-            else
-                sqlString = "select " + String.Join(",", keys.ToArray()) + " from " + table;
-            string conditionString = "";
-            if (condition != "")
-                conditionString = condition;
-            else if (key != "")
-                conditionString = key + "='" + ItemToString(value) + "'";
-            if (orderKey != "")
-                conditionString += " order by " + orderKey;
-            if (conditionString != "")
-                sqlString += " where " + conditionString;
-            return sqlString;
-        }
-
-        private DataTable Select(string table, List<string> keys,
-            string key, object value, string condition, string orderKey = "")
-        {
-            if (table == null || table == "") return null;
-            string sqlString = GetSelectString(table, keys, key, value, condition, orderKey);
-            return Select(sqlString);
-        }
-
-        #endregion
-
-        #region INSERT
-
-        private void Insert(string table, Dictionary<string, object> items,
-            Operation operation = Operation.INSERT)
-        {
-            if (table == null || table == "" || items == null || items.Count == 0) return;
-            string sqlString = "insert into " + table + " " + ItemsToApartString(items);
-            Run(sqlString, operation, table);
-        }
-
-        #endregion
-
-        #region UPDATE
-
-        private void Update(string table, Dictionary<string, object> items,
-            Operation operation = Operation.UPDATE, string key = "", object value = null,
-            string condition = "")
-        {
-            if (table == null || table == "" || items == null || items.Count == 0) return;
-            string sqlString = GetUpdateString(table, items, key, value, condition);
-            Run(sqlString, operation, table);
-        }
-        
-        private string GetUpdateString(string table, Dictionary<string, object> items,
-            string key, object value, string condition)
-        {
-            string sqlString = "update " + table + " set " + ItemsToCombineString(items);
-            if (key != "")
-                sqlString += " where " + key + "='" + ItemToString(value) + "'";
-            else if (condition != "")
-                sqlString += " where " + condition;
-            return sqlString;
-        }
-
-        #endregion
-
-        #region DELETE
-
-        private void Delete(string table, Operation operation = Operation.DELETE,
-            string key = "", object value = null, string condition = "")
-        {
-            if (table == null || table == "") return;
-            string sqlString = GetDeleteString(table, key, value, condition);
-            Run(sqlString, operation, table);
-        }
-
-        private string GetDeleteString(string table, string key, object value, string condition)
-        {
-            string sqlString = "";
-            if (key != "")
-                sqlString = "delete from " + table + " where " +
-                    key + "='" + ItemToString(value) + "'";
-            else if (condition != "")
-                sqlString = "delete from " + table + " where " + condition;
-            else
-                sqlString = "delete from " + table;
-            return sqlString;
-        }
-
-        #endregion
-
         #region SHARED
 
         private string ItemsToCombineString(Dictionary<string, object> items)
@@ -420,19 +325,21 @@ namespace ELite
                 return valueString.Substring(1);
         }
 
-        private string ItemToString(object obj)
+        public static string ItemToString(object obj)
         {
-            string objString = "";
+            string objString = null;
             if (obj != null)
             {
                 Type type = obj.GetType();
                 if (type == typeof(DateTime))
                 {
-                    objString = ((DateTime)obj).ToString("yyyy/MM/dd HH:mm:ss");
+                    objString = ((DateTime)obj).ToString("yyyy-MM-dd HH:mm:ss");
+                    if (objString.EndsWith("00:00:00"))
+                        objString = objString.Substring(0, objString.Length - 9);
                 }
                 else if (type == typeof(bool))
                 {
-                    objString = ((bool)obj) ? "1" : "1";
+                    objString = ((bool)obj) ? "1" : "0";
                 }
                 else
                 {

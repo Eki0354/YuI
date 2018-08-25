@@ -4,13 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Interface_Reception_Ribbon"
-      xmlns:WinFormHost="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-      xmlns:WinFormControls="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
       mc:Ignorable="d" 
       d:DesignHeight="680" d:DesignWidth="1392"
       Title="Page_Reservation" Background="White">
 
-    <!--DockPanel>
+    <DockPanel>
         <DockPanel Width="200">
             <Label Content="订单列表：" BorderBrush="Black" BorderThickness="0.5" DockPanel.Dock="Top" FontSize="30"/>
             <ListBox x:Name="lb_order" Width="200" DockPanel.Dock="Bottom" FontSize="30" Foreground="#FF7D2313" SelectionChanged="lb_order_SelectionChanged"/>
@@ -23,14 +21,15 @@
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="提示信息：" BorderBrush="Black" BorderThickness="0.5" FontSize="30"/>
             <TextBox Grid.Row="1" Name="label_order_error" FontSize="20" IsReadOnly="True"/>
-            <TextBox Grid.Row="2" Name="label_order_clipboard" FontSize="20" IsReadOnly="True"/>
+            <TextBox Grid.Row="2" Name="label_order_content" FontSize="20" IsReadOnly="True"/>
         </Grid>
         <DockPanel>
             <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
                 <Label Content="订单信息：" FontSize="30" BorderBrush="Black" BorderThickness="1"/>
                 <DockPanel Height="150">
-                    <TextBox x:Name="tb_mainInfo" Width="200" FontSize="20" IsReadOnly="True" TextWrapping="WrapWithOverflow" DockPanel.Dock="Left"/>
-                    <Label x:Name="l_resDetails" FontSize="20" DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="0.5"/>
+                    <Label FontSize="20" Content="姓名：&#13;&#13;单号：&#13;&#13;邮箱："/>
+                    <TextBox x:Name="tb_mainInfo" FontSize="20" IsReadOnly="True" TextWrapping="WrapWithOverflow" DockPanel.Dock="Right"/>
+                    <!--Label x:Name="l_resDetails" FontSize="15" DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="0.5"/-->
                 </DockPanel>
             </StackPanel>
             <DockPanel DockPanel.Dock="Bottom">
@@ -42,11 +41,12 @@
 
                 </DataGrid>
             </DockPanel>
-        </DockPanel-->
-    <Grid>
+        </DockPanel>
+    </DockPanel>
+    <!--Grid>
         <WindowsFormsHost x:Name="formHost" VerticalAlignment="Top"
                           Height="680" Width="1392">
             <WinFormControls:Panel x:Name="formPanel" Height="680" Width="1392"></WinFormControls:Panel>
         </WindowsFormsHost>
-    </Grid>
+    </Grid-->
 </Page>

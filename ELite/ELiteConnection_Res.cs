@@ -4,14 +4,61 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using ControlItemCollection;
+using System.Xml;
+using ELite.Reservation;
 
 namespace ELite
 {
     public partial class ELiteConnection
     {
+        public static Dictionary<int, string> ResStatus = new Dictionary<int, string>()
+        {
+            {0,"Ok" },
+            {1,"已更改" },
+            {2,"已取消" }
+        };
+        public static List<ResChannel> Channels;
 
-        #region SHARED
+        #region NEED
+
+        private void InitializeChannels()
+        {
+            Channels = new List<ResChannel>();
+            foreach (XmlNode node in _XmlReader.ReadNodes("Channels"))
+            {
+                string channelName = node.Name;
+                Dictionary<string, string> arrs = _XmlReader.ReadPairs("Channels/" + channelName);
+                Channels.Add(new ResChannel()
+                {
+                    Name = channelName,
+                    ID = Convert.ToInt32(arrs["ID"]),
+                    Title_zh_cn = arrs["Title_zh_cn"],
+                    Title_en_us = arrs["Title_en_us"],
+                    AbTitle = arrs["AbTitle"],
+                    Account = arrs["Account"],
+                    Password = arrs["Password"],
+                    RoomDateType = Convert.ToInt32(arrs["RoomDateType"])
+                });
+            }
+        }
+
+        public bool ExistRes(string resNumber)
+        {
+            string sqlString = "select count(*) from info_res where ResNumber='" + resNumber + "'";
+            _Comm.CommandText = sqlString;
+            return (int)(_Comm.ExecuteScalar()) > 0;
+        }
+
+        public bool ExistResRooms(string resNumber)
+        {
+            string sqlString = "select count(*) from info_res_rooms where ResNumber='" + resNumber + "'";
+            _Comm.CommandText = sqlString;
+            return (int)(_Comm.ExecuteScalar()) > 0;
+        }
+
+        #endregion
+
+        #region SHOW
 
         public string GetResNumber(string condition)
         {
@@ -28,104 +75,101 @@ namespace ELite
             DataTable dt = Select(sqlString);
             if (dt.Rows.Count < 1) return null;
             List<string> resList = new List<string>();
-            foreach(DataRow row in dt.Rows)
+            foreach (DataRow row in dt.Rows)
             {
                 resList.Add(row[0].ToString());
             }
             return resList;
         }
 
-        #endregion
-
-        #region PUBLIC
-
-        public bool ExistRes(string resNumber)
+        public DataTable SelectUncheckedRes()
         {
-            string sqlString = "select count(*) from info_res where ResNumber='" + resNumber + "'";
-            _Comm.CommandText = sqlString;
-            return (int)(_Comm.ExecuteScalar()) > 0;
+            return Select("select Channel, ResNumber from info_res where Checked=0");
         }
 
-        public bool ExistResRooms(string resNumber)
+        public Booking GetBooking(ListBoxResItem res, out DataTable roomDT)
         {
-            string sqlString = "select count(*) from info_res_rooms where ResNumber='" + resNumber + "'";
-            _Comm.CommandText = sqlString;
-            return (int)(_Comm.ExecuteScalar()) > 0;
-        }
-
-        public List<ListBoxResItem> UncheckedResList()
-        {
-            DataTable dt = Select("info_res", new List<string>() { "Channel", "ResNumber" },
-                "Checked", "0", "", "id");
-            List<ListBoxResItem> resList = new List<ListBoxResItem>();
-            if (dt.Rows.Count < 1) return resList;
-            foreach(DataRow row in dt.Rows)
+            string sqlString = "select * from info_res,info_user where " +
+                "info_res.uid=info_user.uid and info_res.ResNumber='" + res.ResNumber + "'";
+            DataTable dt = Select(sqlString);
+            roomDT = GetResRoomsDataTable(res);
+            if (dt.Rows.Count < 1) return null;
+            Dictionary<string, object> resDict = new Dictionary<string, object>();
+            Dictionary<string, object> resUserDict = new Dictionary<string, object>();
+            int resItemsCount = 21;
+            for(int ci = 0; ci < resItemsCount; ci++)
             {
-                resList.Add(new ListBoxResItem(row[0].ToString(), row[1].ToString()));
+                resDict.Add(dt.Columns[ci].ColumnName, dt.Rows[0][ci]);
             }
-            return resList;
-        }
-
-        public DataTable GetResRooms(string resNumber)
-        {
-            DataTable dt = ResRoomsDataTableSource(resNumber,new List<string>()
+            resUserDict.Add(dt.Columns[resItemsCount].ColumnName.Substring(0, 3),
+                dt.Rows[0][resItemsCount]);
+            for (int ci=resItemsCount+1; ci < dt.Columns.Count; ci++)
             {
-                "uid",
-                "Type",
-                "ArrivalDate",
-                "DepartureDate",
-                "Price",
-                "Persons",
-                "Rooms",
-                "Nights",
-                "Status"
-            });
-            DataTable result = new DataTable();
-            //添加列标题
-            foreach(DataColumn column in dt.Columns)
-            {
-                result.Columns.Add(column.ColumnName);
+                resUserDict.Add(dt.Columns[ci].ColumnName, dt.Rows[0][ci]);
             }
-            //添加行数据，根据相应格式转换
-            foreach (DataRow row in dt.Rows)
+            List<Dictionary<string, object>> resRoomDictList = new List<Dictionary<string, object>>();
+            for(int ri = 0; ri < roomDT.Rows.Count; ri++)
             {
-                DataRow newRow = result.NewRow();
-                //由uid获取客人姓名
-                newRow[0] = ReadValue("info_user", 
-                    new List<string>() { "Surname", "Givenname" });
-                for(int i = 1; i < 9; i++)
+                Dictionary<string, object> resRoomDict = new Dictionary<string, object>();
+                for (int ci = 0; ci < roomDT.Columns.Count; ci++)
                 {
-                    string value = "";
-                    object obj = row[i];
-                    if (obj.GetType() == typeof(DateTime))
-                        value = ((DateTime)obj).ToString("yyyy年MM月dd日");
-                    else
-                        value = obj.ToString();
-                    newRow[i] = value;
+                    resRoomDict.Add(roomDT.Columns[ci].ColumnName, roomDT.Rows[ri][ci]);
                 }
-                result.Rows.Add(newRow);
+                resRoomDictList.Add(resRoomDict);
             }
+            return new Booking(resDict, resUserDict, resRoomDictList);
+        }
+
+        private DataTable GetResRoomsDataTable(ListBoxResItem res)
+        {
+            ResChannel resChannel = Channels.Find(c => c.Name == res.Channel);
+            string dateKeys = resChannel.RoomDateType == 0 ?
+                ("ArrivalDate, DepartureDate, ") : "ReservedDate, ";
+            string sqlString = "select Type, " + dateKeys +
+                "Price, Persons, Rooms, Nights, Status from info_res_rooms" +
+                " where ResNumber='" + res.ResNumber + "'";
+            DataTable dt = Select(sqlString);
+            #region 重建新的DataTable，初始化日期和订单状态显示格式
+
+            DataTable result = dt.Clone();
+            result.Columns[1].DataType = typeof(string);
+            if (resChannel.RoomDateType == 0)
+                result.Columns[2].DataType = typeof(string);
+            result.Columns[result.Columns.Count - 1].DataType = typeof(string);
+            for (int ri = 0; ri < dt.Rows.Count; ri++)
+            {
+                DataRow row = result.NewRow();
+                for (int ci = 0; ci < dt.Columns.Count; ci++)
+                {
+                    if (ci == 1 || (ci == 2 && resChannel.RoomDateType == 0))
+                        row[ci] = (Convert.ToDateTime(dt.Rows[ri][ci]))
+                            .ToString("yyyy年MM月dd日");
+                    else if (ci == dt.Columns.Count - 1)
+                        row[ci] = ResStatus[Convert.ToInt32(dt.Rows[ri][ci])];
+                    else
+                        row[ci] = dt.Rows[ri][ci];
+                }
+                result.Rows.Add(row);
+            }
+
+            #endregion
             return result;
         }
 
-        private DataTable ResRoomsDataTableSource(string resNumber, List<string> keys = null)
+        #endregion
+
+        public void InsertRes(Booking booking)
         {
-            return Select("info_res_rooms", keys, "ResNumber", resNumber, "");
+            string sqlString = booking.ResItem.ToInsertString();
+            Run("insert into info_res " + booking.ResItem.ToInsertString(),
+                Operation.INSERTRES, "info_res");
+            Run("insert into info_user " + booking.ResUserItem.ToInsertString(),
+                Operation.INSERT, "info_user");
+            booking.ResRoomItemList.ForEach(resRoomItem => Run("insert into info_res_rooms " +
+                resRoomItem.ToInsertString(), Operation.INSERTRESROOM, "info_res_rooms"));
         }
 
-        public void InsertRes(Dictionary<string, object> resItems,
-            List<Dictionary<string, object>> roomItemsList)
-        {
-            Insert("info_res", resItems, Operation.INSERTRES);
-            roomItemsList.ForEach(roomItems => 
-                Insert("info_res_roomss", roomItems, Operation.INSERTRESROOM));
-        }
-
-        public void UpdateRes(Dictionary<string, object> resItems,
-            List<Dictionary<string, object>> roomItemsList)
-        {
-
-        }
+        #region DELETE
 
         public void DeleteResByCondition(string condition = "")
         {
@@ -135,8 +179,10 @@ namespace ELite
 
         public void DeleteResByNumber(string resNumber)
         {
-            Delete("info_res", Operation.DELETERES, "ResNumber", resNumber);
-            Delete("info_res_rooms", Operation.DELETERESROOM, "ResNumber", resNumber);
+            Run("delete from info_res where ResNumber='" + resNumber + "'",
+                Operation.DELETERES, "info_res");
+            Run("delete from info_res_rooms where ResNumber='" + resNumber + "'",
+                Operation.DELETERES, "info_res_rooms");
         }
 
         #endregion

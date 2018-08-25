@@ -15,7 +15,8 @@ namespace EkiXmlDocument
         private string _Path;
         private string _Name;
         private string _Extension;
-        public string FullPath { get { return _Path + "\\" + _Name + "." + _Extension; } }
+        public string FullName => _Name + "." + _Extension;
+        public string FullPath => _Path + "\\" + FullName;
         private XmlNode _Root;
         private Logger _Logger;
 
@@ -135,13 +136,9 @@ namespace EkiXmlDocument
         {
             //初始化_Doc，
             if (File.Exists(FullPath))
-            {
-                if (!Load()) throw new Exception();
-            }
+                Load();
             else
-            {
                 Create();
-            }
         }
 
         #endregion

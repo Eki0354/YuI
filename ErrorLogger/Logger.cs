@@ -13,7 +13,8 @@ namespace ErrorLogger
         private string _Path;
         private string _Name;
         private string _Extension;
-        public string FullPath { get { return _Path + "\\" + _Name + "." + _Extension; } }
+        public string FullName => _Name + "." + _Extension;
+        public string FullPath => _Path + "\\" + FullName;
 
         public Logger(string fullPath = "")
         {

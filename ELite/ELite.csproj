@@ -33,6 +33,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IronPython, Version=2.7.8.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\IronPython 2.7\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.2.0.0, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\IronPython 2.7\Microsoft.Scripting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite">
@@ -55,6 +63,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ELiteConnection_Res.cs" />
     <Compile Include="ELiteConnection_Staff.cs" />
+    <Compile Include="Reservation\ResAssist.cs" />
+    <Compile Include="Reservation\ResChannel.cs" />
+    <Compile Include="Reservation\ResGetter.cs" />
+    <Compile Include="Reservation\ResItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="x64\SQLite.Interop.dll">
@@ -65,10 +77,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ControlItemCollection\ControlItemCollection.csproj">
-      <Project>{e6895669-1fdc-429f-8a96-7c5ea37dc5fb}</Project>
-      <Name>ControlItemCollection</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EkiXmlConfiguration\EkiXmlConfiguration\EkiXmlDocument.csproj">
       <Project>{691578ca-650c-42e2-8d17-7af9d8f1468c}</Project>
       <Name>EkiXmlDocument</Name>
@@ -81,6 +89,9 @@
       <Project>{5983af32-6aa8-4d81-b2f7-0c04ce6d6181}</Project>
       <Name>Staff</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

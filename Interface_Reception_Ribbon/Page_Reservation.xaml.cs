@@ -1,35 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using System.Windows.Forms;
-using ControlItemCollection;
-using Mrs_Panda预订快捷工具;
+using ELite.Reservation;
+using System.Data;
 
 namespace Interface_Reception_Ribbon
 {
     public partial class Page_Reservation : Page
     {
         #region PROPERTY
-
-        private mainform form = new mainform();
+        
         private string _LocalPath = Environment.CurrentDirectory;
         //public ListBox ResListBox { get { return lb_order; } }
+        private ListBoxResItem _CurrentRes;
 
         #endregion
 
         public Page_Reservation()
         {
             InitializeComponent();
-            form.FormBorderStyle = FormBorderStyle.None; // 无边框
-            form.TopLevel = false; // 不是最顶层窗体
-            formPanel.Controls.Add(form);  // 添加到 Panel中
-            form.Show();
         }
 
         public void InitializeResListBox(List<ListBoxResItem> resList)
         {
-            //lb_order.Items.Clear();
-            //resList.ForEach(res => lb_order.Items.Add(res));
+            ResetOrder();
+            lb_order.Items.Clear();
+            resList.ForEach(res => lb_order.Items.Add(res));
         }
 
         #region SHARED
@@ -42,10 +38,36 @@ namespace Interface_Reception_Ribbon
 
         #endregion
 
+        #region PUBLIC
+
+        public void AddNewRes(ListBoxResItem res)
+        {
+            lb_order.Items.Add(res);
+            lb_order.SelectedItem = res;
+        }
+
+        #endregion
+
+        private void ResetOrder()
+        {
+            tb_mainInfo.Text = string.Empty;
+            //l_resDetails.Content = null;
+            dg_order_room.ItemsSource = null;
+            label_order_error.Text = string.Empty;
+            label_order_content.Text = string.Empty;
+        }
+
         private void lb_order_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //ListBoxResItem res = lb_order.SelectedItem as ListBoxResItem;
-            //dg_order_room.ItemsSource = MainWindow._Conn.GetResRooms(res.ResNumber).DefaultView;
+            object obj = ((ListBox)sender).SelectedItem;
+            if (obj == _CurrentRes) return;
+            ResetOrder();
+            _CurrentRes = obj as ListBoxResItem;
+            DataTable roomDT = new DataTable();
+            Booking booking = MainWindow._Conn.GetBooking(_CurrentRes, out roomDT);
+            dg_order_room.ItemsSource = roomDT.DefaultView;
+            tb_mainInfo.Text = booking.ToMainInfoString();
+            //l_resDetails.Content = booking.ToDetailsString();
         }
     }
 }

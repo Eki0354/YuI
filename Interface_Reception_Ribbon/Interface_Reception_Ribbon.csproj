@@ -298,10 +298,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ControlItemCollection\ControlItemCollection.csproj">
-      <Project>{e6895669-1fdc-429f-8a96-7c5ea37dc5fb}</Project>
-      <Name>ControlItemCollection</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EkiXmlConfiguration\EkiXmlConfiguration\EkiXmlDocument.csproj">
       <Project>{691578ca-650c-42e2-8d17-7af9d8f1468c}</Project>
       <Name>EkiXmlDocument</Name>
@@ -309,14 +305,6 @@
     <ProjectReference Include="..\ELite\ELite.csproj">
       <Project>{50e673fa-efd7-46ca-8841-077930915b43}</Project>
       <Name>ELite</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\http\Mrs Panda预订制作快捷工具.vbproj">
-      <Project>{5dba5d4f-9839-4933-baee-a1e6e23fc4e1}</Project>
-      <Name>Mrs Panda预订制作快捷工具</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Reservation\Reservation.csproj">
-      <Project>{7be3b04e-5e44-4637-84b9-39dd9879883a}</Project>
-      <Name>Reservation</Name>
     </ProjectReference>
     <ProjectReference Include="..\SaleSystem\SaleSystem.csproj">
       <Project>{3843311a-f715-44fd-851c-350888113bf4}</Project>
