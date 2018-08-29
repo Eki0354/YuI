@@ -335,6 +335,9 @@ namespace ELite.Reservation
         public Booking(Dictionary<string, object> resItems, Dictionary<string, object> resUserItems,
             List<Dictionary<string, object>> resRoomItemList) : base()
         {
+            ResItem = new DBResItem(resItems);
+            ResUserItem = new DBResUserItem(resUserItems);
+            ResRoomItemList = new List<DBResRoomItem>();
             resRoomItemList.ForEach(resRoomItem => 
                 ResRoomItemList.Add(new DBResRoomItem(resRoomItem)));
         }
@@ -388,12 +391,13 @@ namespace ELite.Reservation
         {
             Dictionary<string, string> resDcit = ResItem.ToStringDictionary();
             Dictionary<string, string> resUserDict = ResUserItem.ToStringDictionary();
-            Dictionary<string, string> dpDict=new Dictionary<string, string>()
+            Dictionary<string, string> dpDict = new Dictionary<string, string>()
             {
                 {"ResNumber", "Ref" },
                 {"Price", "Room Fee" },
 
-            }
+            };
+            return null;
         }
     }
 
@@ -401,7 +405,7 @@ namespace ELite.Reservation
     public class ListBoxResItem
     {
         public string Channel { get; }
-        public string ResNumber { get; }
+        public string ResNumber { get; set; }
         public string GuestName { get; }
 
         public ListBoxResItem(string channel, string resNumber, string guestName = "Mrs Panda")

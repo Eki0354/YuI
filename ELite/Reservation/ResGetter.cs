@@ -138,6 +138,14 @@ namespace ELite.Reservation
             return respHtml;
         }
 
+        public static string GetHWRes(string resNumber)
+        {
+            ScriptEngine pyEngine = Python.CreateEngine();//创建Python解释器对象
+            dynamic py = pyEngine.ExecuteFile("HostelWorld.py");//读取脚本文件
+            py.Login();
+            return py.Get(resNumber);//调用脚本文件中对应的函数
+        }
+
         /// <summary> 获取订单。步骤2：使用正则表达式从订单源文本中匹配订单详情，
         /// 并保存到数据库。 </summary>
         private bool SaveResItem()

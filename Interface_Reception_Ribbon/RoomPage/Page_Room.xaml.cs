@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
-using Interface_Reception_Ribbon.Room;
 using ELite;
 
 
@@ -26,7 +25,7 @@ namespace Interface_Reception_Ribbon
     {
         #region PROPERTY
 
-        private static ELiteConnection _Conn = MainWindow._Conn;
+        //private static ELiteConnection _Conn = MainWindow._Conn;
         DateTime _Date_Selected_Start;
         DateTime _Date_Selected_End;
 

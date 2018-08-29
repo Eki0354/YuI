@@ -24,8 +24,7 @@ namespace ELite.Reservation
             if (dt.Rows.Count < 1) return resList;
             foreach (DataRow row in dt.Rows)
             {
-                resList.Add(new ListBoxResItem(ELiteConnection.Channels.Find(
-                    c => c.ID == Convert.ToInt32(row[0])).Title_en_us, row[1].ToString()));
+                resList.Add(new ListBoxResItem(row[0].ToString(), row[1].ToString()));
             }
             return resList;
         }

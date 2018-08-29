@@ -60,7 +60,7 @@ namespace ELite
 
         #region SHOW
 
-        public string GetResNumber(string condition)
+        public string FilterResNumber(string condition)
         {
             if (condition == null || condition == "") return null;
             string sqlString = "select ResNumber from info_res where " + condition;
@@ -68,7 +68,7 @@ namespace ELite
             return (string)_Comm.ExecuteScalar();
         }
 
-        public List<string> GetResNumberList(string condition)
+        public List<string> FilterResNumberList(string condition)
         {
             if (condition == null || condition == "") return null;
             string sqlString = "select ResNumber from info_res where " + condition;
@@ -84,9 +84,9 @@ namespace ELite
 
         public DataTable SelectUncheckedRes()
         {
-            return Select("select Channel, ResNumber from info_res where Checked=0");
+             return Select("select Channel, ResNumber from info_res where Checked=0");
         }
-
+        
         public Booking GetBooking(ListBoxResItem res, out DataTable roomDT)
         {
             string sqlString = "select * from info_res,info_user where " +
@@ -169,12 +169,17 @@ namespace ELite
                 resRoomItem.ToInsertString(), Operation.INSERTRESROOM, "info_res_rooms"));
         }
 
+        public void UpdateRes(string resNumber, string key, object value)
+        {
+            Run("update info_res set " + key + "='" + ItemToString(value) + "'");
+        }
+
         #region DELETE
 
         public void DeleteResByCondition(string condition = "")
         {
             if (condition == null || condition == "") return;
-            GetResNumberList(condition).ForEach(res => DeleteResByNumber(res));
+            FilterResNumberList(condition).ForEach(res => DeleteResByNumber(res));
         }
 
         public void DeleteResByNumber(string resNumber)

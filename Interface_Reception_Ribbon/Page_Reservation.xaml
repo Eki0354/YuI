@@ -11,17 +11,17 @@
     <DockPanel>
         <DockPanel Width="200">
             <Label Content="订单列表：" BorderBrush="Black" BorderThickness="0.5" DockPanel.Dock="Top" FontSize="30"/>
-            <ListBox x:Name="lb_order" Width="200" DockPanel.Dock="Bottom" FontSize="30" Foreground="#FF7D2313" SelectionChanged="lb_order_SelectionChanged"/>
+            <ListBox x:Name="lb_order" Width="200" DockPanel.Dock="Bottom" FontSize="20" Foreground="#FF7D2313" SelectionChanged="lb_order_SelectionChanged"/>
         </DockPanel>
         <Grid DockPanel.Dock="Right" Width="200">
             <Grid.RowDefinitions>
                 <RowDefinition Height="52"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+                <RowDefinition Height="0.3*"/>
+                <RowDefinition Height="0.7*"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="提示信息：" BorderBrush="Black" BorderThickness="0.5" FontSize="30"/>
-            <TextBox Grid.Row="1" Name="label_order_error" FontSize="20" IsReadOnly="True"/>
-            <TextBox Grid.Row="2" Name="label_order_content" FontSize="20" IsReadOnly="True"/>
+            <TextBox Grid.Row="1" Name="tb_order_error" FontSize="15" IsReadOnly="True" TextWrapping="Wrap"/>
+            <TextBox Grid.Row="2" Name="tb_order_content" FontSize="15" IsReadOnly="True" TextWrapping="Wrap"/>
         </Grid>
         <DockPanel>
             <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
@@ -29,7 +29,7 @@
                 <DockPanel Height="150">
                     <Label FontSize="20" Content="姓名：&#13;&#13;单号：&#13;&#13;邮箱："/>
                     <TextBox x:Name="tb_mainInfo" FontSize="20" IsReadOnly="True" TextWrapping="WrapWithOverflow" DockPanel.Dock="Right"/>
-                    <!--Label x:Name="l_resDetails" FontSize="15" DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="0.5"/-->
+                    <!--TextBox x:Name="tb_resDetails" FontSize="15" DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="0.5"/-->
                 </DockPanel>
             </StackPanel>
             <DockPanel DockPanel.Dock="Bottom">

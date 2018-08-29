@@ -225,7 +225,7 @@ namespace ELite
             Run(sqlString, Operation.RUN);
         }
 
-        private void Run(string sql, Operation operation = Operation.RUN, string table = "")
+        public bool Run(string sql, Operation operation = Operation.RUN, string table = "")
         {
             _Comm.Reset();
             _Comm.CommandText = sql;
@@ -234,10 +234,12 @@ namespace ELite
                 _Comm.ExecuteNonQuery();
                 if (table != "")
                     AddOperationLog(table, operation);
+                return true;
             }
             catch (Exception e)
             {
                 _Logger.Log(sql, e.Message);
+                return false;
             }
         }
 
@@ -257,7 +259,7 @@ namespace ELite
             return _DataReader;
         }
 
-        private DataTable Select(string sql)
+        public DataTable Select(string sql)
         {
             if (sql == null || sql == "") return null;
             string tableName = "反正是个没有人看得到的彩蛋，那我写得长一点也没关系吧";

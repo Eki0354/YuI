@@ -52,7 +52,7 @@
   <sys:String x:Key="text_button_order_add">新建</sys:String>
   <sys:String x:Key="text_button_order_edit">编辑</sys:String>
   <sys:String x:Key="text_button_order_delete">删除</sys:String>
-  <sys:String x:Key="text_group_excel_title">Excel操作</sys:String>
+  <sys:String x:Key="text_group_excel_title">旧版操作</sys:String>
   <sys:String x:Key="text_tab_sale_title">销售</sys:String>
   <sys:String x:Key="text_lable_saleItemCount">当前剩余：</sys:String>
   <sys:String x:Key="text_lable_soldItemCount">当前售出：</sys:String>
