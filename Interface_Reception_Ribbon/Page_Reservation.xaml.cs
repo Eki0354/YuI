@@ -339,6 +339,8 @@ namespace Interface_Reception_Ribbon
                                         ItemValue += ",\'" + tmp + "\'";
                                         break;
                                 }
+                                if (N.Name == "GuestName")
+                                    NewOrder.GuestName = tmp;
                             }
                         }
                         break;

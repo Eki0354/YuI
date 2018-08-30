@@ -406,7 +406,7 @@ namespace ELite.Reservation
     {
         public string Channel { get; }
         public string ResNumber { get; set; }
-        public string GuestName { get; }
+        public string GuestName { get; set; }
 
         public ListBoxResItem(string channel, string resNumber, string guestName = "Mrs Panda")
         {
