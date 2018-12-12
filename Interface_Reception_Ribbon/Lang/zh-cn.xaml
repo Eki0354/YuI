@@ -20,7 +20,7 @@
   <sys:String x:Key="text_group_display_title">显示</sys:String>
   <sys:String x:Key="text_label_ftdate">起止日期</sys:String>
   <sys:String x:Key="text_button_display_halfmonth">半月</sys:String>
-  <sys:String x:Key="text_button_price_room">房间价格</sys:String>
+  <sys:String x:Key="text_button_price_room">编辑房间</sys:String>
   <sys:String x:Key="text_button_price_drinks">酒水价格</sys:String>
   <sys:String x:Key="text_button_price_foods">点餐价格</sys:String>
   <sys:String x:Key="text_button_view_vip">合作客户</sys:String>

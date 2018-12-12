@@ -18,10 +18,10 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using ELite;
-using EkiXmlDocument;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using ELite.Reservation;
+using EControlsLibrary;
 
 namespace Interface_Reception_Ribbon
 {
@@ -45,9 +45,11 @@ namespace Interface_Reception_Ribbon
             List<string> staff = _pageRes.GetStaffList;
             staff.ForEach(s =>
             {
-                RibbonGalleryItem item = new RibbonGalleryItem();
-                item.Content = s;
-                item.Width = 80;
+                RibbonGalleryItem item = new RibbonGalleryItem
+                {
+                    Content = s,
+                    Width = 80
+                };
                 rgc_staff.Items.Add(item);
             });
         }
@@ -58,8 +60,10 @@ namespace Interface_Reception_Ribbon
             List<string> emailTemplets = _pageRes.ReadEmailTempletList();
             emailTemplets.ForEach(et =>
             {
-                RibbonButton rb = new RibbonButton();
-                rb.Label = et;
+                RibbonButton rb = new RibbonButton
+                {
+                    Label = et
+                };
                 rb.Click += _pageRes.SetEmailTempletText;
                 rsb_emailTemplets.Items.Add(rb);
             });
@@ -75,13 +79,13 @@ namespace Interface_Reception_Ribbon
             string cellString = _pageRes.CellString;
             if (staffObj is null || string.IsNullOrEmpty(cellString))
             {
-                PopupMsg.MsgHelper.ShowMessage("复制失败！", rb_copy);
+                EMsgBox.ShowMessage("复制失败！", rb_copy);
                 return;
             }
             staff = staffObj.ToString();
-            Clipboard.SetText(cellString + ";;;" + comments + "\r\n" + _StaffName +
-                " " + DateTime.Now.ToString("yyyy/MM/dd"));
-            PopupMsg.MsgHelper.ShowMessage("复制成功！", rb_copy);
+            Clipboard.SetText(cellString + ";;;" + comments + "\r\n\r\n" + _StaffName +
+                " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+            EMsgBox.ShowMessage("复制成功！", rb_copy);
         }
 
         /// <summary> 为复制确认预订的邮件内容的RibbonMenuItem提供点击事件，
@@ -102,31 +106,32 @@ namespace Interface_Reception_Ribbon
                     string emailAddress = _pageRes.EmailAddress;
                     if (string.IsNullOrEmpty(emailAddress))
                     {
-                        PopupMsg.MsgHelper.ShowMessage("失败！邮箱地址不能为空！", rsb_emailReply);
+                        EMsgBox.ShowMessage("失败！邮箱地址不能为空！", rsb_emailReply);
                     }
                     else
                     {
                         Clipboard.SetText(_pageRes.EmailAddress);
-                        PopupMsg.MsgHelper.ShowMessage("已成功复制邮箱地址！", rsb_emailReply);
+                        EMsgBox.ShowMessage("已成功复制邮箱地址！", rsb_emailReply);
                     }
                     break;
                 case "1":
-                    Clipboard.SetText(_pageRes.EmailTheme.Replace("StaffName", _StaffName));
-                    PopupMsg.MsgHelper.ShowMessage("已成功复制邮件主题！", rsb_emailReply);
+                    Clipboard.SetText(_pageRes.EmailThemeTemplet.Replace("StaffName", _StaffName));
+                    EMsgBox.ShowMessage("已成功复制邮件主题！", rsb_emailReply);
                     break;
                 case "2":
+                    Clipboard.SetText(_pageRes.EmailText(_StaffName));
                     try
                     {
-                        Clipboard.SetText(_pageRes.EmailText(_StaffName));
-                        PopupMsg.MsgHelper.ShowMessage("已成功复制邮件正文！", rsb_emailReply);
+                        
+                        EMsgBox.ShowMessage("已成功复制邮件正文！", rsb_emailReply);
                     }
                     catch
                     {
-                        PopupMsg.MsgHelper.ShowMessage("生成邮件正文失败！", rsb_emailReply);
+                        EMsgBox.ShowMessage("生成邮件正文失败！", rsb_emailReply);
                     }
                     break;
                 default:
-                    PopupMsg.MsgHelper.ShowMessage("无法识别的指令！", rsb_emailReply);
+                    EMsgBox.ShowMessage("无法识别的指令！", rsb_emailReply);
                     break;
             }
         }
@@ -138,12 +143,25 @@ namespace Interface_Reception_Ribbon
 
         private void FindRes(object sender, RoutedEventArgs e)
         {
-            _pageRes.FindOrder();
+            _pageRes.FindRes();
         }
 
-        private void DeleteRes(object sender, RoutedEventArgs e)
+        private void UpdateConfig(object sender, RoutedEventArgs e)
         {
-            _pageRes.DeleteSelectedResItem();
+            _pageRes.UpdateResConfig();
         }
+
+        private void OpenConfig(object sender, RoutedEventArgs e)
+        {
+            _pageRes.OpenResConfig();
+        }
+        
+        private void RibbonGallery_SelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            StaffItem staff = new StaffItem();
+            staff.Items.Nickname = _StaffName;
+            _Conn.SetStaff(staff );
+        }
+
     }
 }

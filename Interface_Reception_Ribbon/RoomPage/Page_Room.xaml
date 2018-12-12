@@ -4,63 +4,88 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Interface_Reception_Ribbon"
+      xmlns:ecl="clr-namespace:EControlsLibrary;assembly=ecl"
       mc:Ignorable="d" 
       d:DesignHeight="665" d:DesignWidth="1400"
       Title="Page_Room">
-
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="200"/>
-        </Grid.ColumnDefinitions>
-        <RibbonGroup Grid.Column="0" x:Name="rg_info" HorizontalAlignment="Left" Width="200" Background="#FFEBF3F5" Grid.ColumnSpan="2" Margin="1,1,0,0.739" Grid.RowSpan="2">
-            <WrapPanel Orientation="Vertical">
-                <Label x:Name="Info_FName">
-                    <TextBlock TextWrapping="Wrap" Text="First Name:"/>
-                </Label>
-                <Label x:Name="Info_LName">
-                    <TextBlock TextWrapping="Wrap" Text="Last Name:"/>
-                </Label>
-            </WrapPanel>
-        </RibbonGroup>
-        <DataGrid x:Name="dg_room" EnableColumnVirtualization="True" CanUserAddRows="False"
-                  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" CanUserDeleteRows="False"
-                      SelectionUnit="Cell" CanUserReorderColumns="False" CanUserResizeColumns="False"
-                      CanUserResizeRows="False" CanUserSortColumns="False" TextOptions.TextHintingMode="Fixed" 
-                      Margin="0,0,0,0" Grid.Column="1" Grid.Row="0" HeadersVisibility="Column">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn ClipboardContentBinding="{x:Null}"/>
-            </DataGrid.Columns>
-            <DataGrid.CellStyle>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="Height" Value="50" />
-                    <Setter Property="Width" Value="100" />
-                </Style>
-            </DataGrid.CellStyle>
-        </DataGrid>
-        <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Background="#FFF0F0F0">
-            <Label x:Name="l_m" Content="{DynamicResource l_month}" FontSize="30"/>
-            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                <RibbonRadioButton Label="01" FontSize="30"/>
-                <RibbonRadioButton Label="02" FontSize="30"/>
-                <RibbonRadioButton Label="03" FontSize="30"/>
-                <RibbonRadioButton Label="04" FontSize="30"/>
-                <RibbonRadioButton Label="05" FontSize="30"/>
-                <RibbonRadioButton Label="06" FontSize="30"/>
-                <RibbonRadioButton Label="07" FontSize="30"/>
-                <RibbonRadioButton Label="08" FontSize="30"/>
-                <RibbonRadioButton Label="09" FontSize="30"/>
-                <RibbonRadioButton Label="10" FontSize="30"/>
-                <RibbonRadioButton Label="11" FontSize="30"/>
-                <RibbonRadioButton Label="12" FontSize="30"/>
+    <DockPanel>
+        <Border BorderBrush="BurlyWood" BorderThickness="1" DockPanel.Dock="Bottom">
+            <StackPanel Background="#FFF0F0F0" Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="年份：" FontSize="30"/>
+                    <ComboBox x:Name="cb_year"
+                              FontSize="30"
+                              IsReadOnly="True">
+                        <ComboBoxItem>2014</ComboBoxItem>
+                        <ComboBoxItem>2015</ComboBoxItem>
+                        <ComboBoxItem>2016</ComboBoxItem>
+                        <ComboBoxItem>2017</ComboBoxItem>
+                        <ComboBoxItem>2018</ComboBoxItem>
+                        <ComboBoxItem>2019</ComboBoxItem>
+                        <ComboBoxItem>2020</ComboBoxItem>
+                        <ComboBoxItem>2021</ComboBoxItem>
+                        <ComboBoxItem>2022</ComboBoxItem>
+                        <ComboBoxItem>2023</ComboBoxItem>
+                        <ComboBoxItem>2024</ComboBoxItem>
+                        <ComboBoxItem>2025</ComboBoxItem>
+                    </ComboBox>
+                    <RadioButton Content="01月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="02月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="03月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="04月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="05月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="06月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="07月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="08月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="09月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="10月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="11月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                    <RadioButton Content="12月"
+                                 Style="{StaticResource BoxRadioButton}"
+                                 Checked="MonthRadioButton_Checked"/>
+                </StackPanel>
             </StackPanel>
+        </Border>
+        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+            <RibbonGroup x:Name="rg_info" Width="200" Background="#FFEBF3F5">
+                <WrapPanel Orientation="Vertical">
+                    <Label x:Name="Info_FName">
+                        <TextBlock TextWrapping="Wrap" Text="First Name:"/>
+                    </Label>
+                    <Label x:Name="Info_LName">
+                        <TextBlock TextWrapping="Wrap" Text="Last Name:"/>
+                    </Label>
+                </WrapPanel>
+            </RibbonGroup>
+            <DockPanel>
+                <TextBlock Text="房型" Background="#FFF0F0F0" TextAlignment="Center" DockPanel.Dock="Top"/>
+                <ecl:BulletResListBox x:Name="rtlb_res"
+                                     Width="120"/>
+            </DockPanel>
         </StackPanel>
-        <RibbonGroup Grid.Column="1" x:Name="rg_choose" HorizontalAlignment="Right" Width="200" Background="#FFEBF3F5" Grid.ColumnSpan="2" Margin="0,1,0.664,0.739" Grid.RowSpan="2">
+        <RibbonGroup DockPanel.Dock="Right" x:Name="rg_choose" Width="200" Background="#FFEBF3F5">
             <StackPanel Orientation="Horizontal">
                 <Label Foreground="DarkGreen">房间状态</Label>
                 <RibbonCheckBox x:Name="ViewRoomStatus_Inall" Label="全选" Foreground="DarkOrange"/>
@@ -131,5 +156,20 @@
                 <RibbonRadioButton x:Name="ViewRoomDate_Tomonth" Label="本月" Margin="0,-28,0,0" Height="20"/>
             </WrapPanel>
         </RibbonGroup>
-    </Grid>
+        <DataGrid  x:Name="dg_room"
+                   CanUserAddRows="False"
+                   CanUserDeleteRows="False"
+                   IsReadOnly="True"
+                   EnableColumnVirtualization="True"
+                   EnableRowVirtualization="True"
+                   HorizontalScrollBarVisibility="Visible"
+                   VerticalScrollBarVisibility="Visible"
+                   CanUserReorderColumns="False"
+                   CanUserResizeColumns="False"
+                   CanUserResizeRows="False"
+                   CanUserSortColumns="False"
+                   HeadersVisibility="All"
+                   SelectionUnit="CellOrRowHeader"
+                   CellStyle="{StaticResource RoomCell}"/>
+    </DockPanel>
 </Page>

@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="EControlsLibrary.ListBoxResBalloon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EControlsLibrary"
+             mc:Ignorable="d"
+             d:DesignHeight="65" d:DesignWidth="200"
+             MouseRightButtonUp="UserControl_MouseRightButtonUp">
+    <Border BorderBrush="LightSlateGray" BorderThickness="0,0,0,1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="tb_channel"
+                       x:FieldModifier="private"
+                       Grid.Row="0"
+                       Width="200"
+                       Foreground="Black"
+                       FontSize="24"/>
+            <TextBlock x:Name="tb_name"
+                       x:FieldModifier="private"
+                       Grid.Row="1"
+                       Width="200"
+                       Foreground="#FF7D2313"
+                       FontSize="16"
+                       TextWrapping="Wrap"/>
+            
+        </Grid>
+    </Border>
+</UserControl>

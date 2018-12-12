@@ -14,7 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
 using ELite;
-
+using System.Globalization;
+using System.Windows.Controls.Primitives;
 
 namespace Interface_Reception_Ribbon
 {
@@ -23,13 +24,7 @@ namespace Interface_Reception_Ribbon
     /// </summary>
     public partial class Page_Room : Page
     {
-        #region PROPERTY
-
-        //private static ELiteConnection _Conn = MainWindow._Conn;
-        DateTime _Date_Selected_Start;
-        DateTime _Date_Selected_End;
-
-        #endregion
+        ELiteConnection _Conn = MainWindow.Conn;
 
         public Page_Room()
         {
@@ -38,33 +33,51 @@ namespace Interface_Reception_Ribbon
 
         #region DATAGRID
 
-        DataTable _seDataTable = new DataTable();
-        DataTable _monthDataTable = new DataTable();
+        DateTime _StartDate;
+        DateTime _EndDate;
+        DataTable _CurrentRoomSet = new DataTable();
 
-        public void ChangeDisplayDate(DateTime date_start, DateTime date_end)
+        public void UpdateDisplayDate(DateTime date_from, DateTime date_to)
         {
-            if (dg_room == null)
-                return;
-            if (_Date_Selected_Start == date_start && _Date_Selected_End == date_end)
-                return;
-            _Date_Selected_Start = date_start;
-            _Date_Selected_End = date_end;
-            UpdateSEDataTable(_Date_Selected_Start, _Date_Selected_End);
-            dg_room.ItemsSource = _seDataTable.DefaultView;
+            if (_StartDate == date_from && _EndDate == date_to) return;
+            if (date_to < date_from || (date_to - date_from).Days > 31) return;
+            _StartDate = date_from;
+            _EndDate = date_to;
+            UpdateSelectedRoomDataTable(_StartDate, _EndDate);
         }
 
-        private void UpdateSEDataTable(DateTime date_start, DateTime date_end)
+        private void UpdateSelectedRoomDataTable(DateTime date_from, DateTime date_to)
         {
-
+            _CurrentRoomSet = _Conn.GetGridRoomItemSet(date_from, date_to);
+            dg_room.ItemsSource = _CurrentRoomSet.DefaultView;
         }
 
         #endregion
 
-        #region CONN
+        private void MonthRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton rb = e.Source as RadioButton;
+            if (rb == null) return;
+            ComboBoxItem yearItem = cb_year.SelectedItem as ComboBoxItem;
+            if (yearItem == null) return;
+            string yearText = yearItem.Content.ToString();
+            if (string.IsNullOrEmpty(yearText)) return;
+            int year = Convert.ToInt32(yearText);
+            int month = Convert.ToInt32(rb.Content.ToString().Substring(0, 2));
+            _StartDate = new DateTime(year, month, 1);
+            _EndDate= new DateTime(year, month, DateTime.DaysInMonth(year, month));
+            UpdateSelectedRoomDataTable(_StartDate, _EndDate);
+        }
+    }
 
-        
-
-
-        #endregion
+    public class CellCoord
+    {
+        public int RowIndex { get; set; }
+        public int ColumnIndex { get; set; }
+        public CellCoord(int rowIndex, int columnIndex)
+        {
+            RowIndex = RowIndex;
+            ColumnIndex = columnIndex;
+        }
     }
 }

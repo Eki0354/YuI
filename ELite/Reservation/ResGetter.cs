@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ELite;
-using EkiXmlDocument;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ELite.Reservation;
-using ErrorLogger;
 using System.Net;
 using Microsoft.Scripting.Hosting;
-using IronPython.Hosting;
 
 namespace ELite.Reservation
 {
@@ -24,7 +21,7 @@ namespace ELite.Reservation
         private ELiteConnection _Conn;
         private Logger _Logger;
         private string _CrtText;
-        private ListBoxResItem _CrtLBResItem;
+        private ELiteListBoxResItem _CrtLBResItem;
         private Booking _CrtBooking;
 
         #region MAIN
@@ -44,7 +41,7 @@ namespace ELite.Reservation
 
         /// <summary> 对传入的文本信息进行分析，提取订单号及订单详情，成功则返回订单号，
         /// 失败时返回空值。 </summary>
-        public ListBoxResItem GetReservation(string text)
+        public ELiteListBoxResItem GetReservation(string text)
         {
             _CrtText = text;
             if (String.IsNullOrEmpty(_CrtText)) return null;
@@ -71,7 +68,7 @@ namespace ELite.Reservation
         private void GetListBoxResItem()
         {
             Regex regex;
-            _CrtLBResItem = new ListBoxResItem(string.Empty, string.Empty);
+            _CrtLBResItem = ELiteListBoxResItem.Empty;
             //列出所有订单源，并尝试获取订单号
             foreach (XmlNode node in _XmlReader.ReadNodes("Channels"))
             {
@@ -82,19 +79,16 @@ namespace ELite.Reservation
                 regex = new Regex(node.SelectSingleNode("Rex-ResNumber").InnerText);
                 string resNumber = regex.Match(_CrtText).Groups[0].Value;
                 if (String.IsNullOrEmpty(resNumber)) continue;
-                _CrtLBResItem = new ListBoxResItem(ELiteConnection.Channels.Find(
-                    c => c.Name == channel).Title_en_us, resNumber);
+                _CrtLBResItem.Channel = ELiteConnection.Channels.Find(c => c.Name == channel).Title_en_us;
+                _CrtLBResItem.ResNumber = resNumber;
+                _CrtLBResItem.FullName = ELiteConnection.DefaultUserName;
                 break;
             }
         }
 
         /// <summary> 获取订单。步骤1.5：为Method为Http获取方式的订单源获取页面代码。 </summary>
-        private string GetHttpHtmlText()
+        public string GetHttpHtmlText()
         {
-            ScriptEngine pyEngine = Python.CreateEngine();//创建Python解释器对象
-            dynamic py = pyEngine.ExecuteFile(_CrtLBResItem.Channel + ".py");//读取脚本文件
-            py.Login();
-            return py.Get(_CrtLBResItem.ResNumber);//调用脚本文件中对应的函数
             #region 登录
 
             string uriString = _XmlReader.ReadValue(
@@ -140,10 +134,15 @@ namespace ELite.Reservation
 
         public static string GetHWRes(string resNumber)
         {
-            ScriptEngine pyEngine = Python.CreateEngine();//创建Python解释器对象
+            /*var options = new Dictionary<string, object>();
+            options["Frames"] = true;
+            options["FullFrames"] = true;
+            ScriptEngine pyEngine = Python.CreateEngine(options);//创建Python解释器对象
+            Console.WriteLine(pyEngine.LanguageVersion.ToString());
             dynamic py = pyEngine.ExecuteFile("HostelWorld.py");//读取脚本文件
             py.Login();
-            return py.Get(resNumber);//调用脚本文件中对应的函数
+            return py.Get(resNumber);//调用脚本文件中对应的函数*/
+            return "";
         }
 
         /// <summary> 获取订单。步骤2：使用正则表达式从订单源文本中匹配订单详情，

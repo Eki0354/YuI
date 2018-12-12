@@ -5,9 +5,8 @@ using System.Text;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
-using ErrorLogger;
-using EkiXmlDocument;
-using Staff;
+using ELite;
+using ELite.ELiteItem;
 
 namespace ELite
 {
@@ -17,14 +16,7 @@ namespace ELite
         INSERT,
         UPDATE,
         DELETE,
-        INSERTRES,
-        INSERTRESROOM,
-        UPDATETABLE,
-        UPDATERES,
-        UPDATERESROOM,
-        DELETETABLE,
-        DELETERES,
-        DELETERESROOM
+        CREATE
     }
 
     public partial class ELiteConnection
@@ -35,15 +27,15 @@ namespace ELite
         private SQLiteCommand _Comm;
         private SQLiteDataReader _DataReader;
         private string _Path;
-        private string _DBPath => _Path + "\\database";
         private string _Name;
         private string _Extension;
         public string FullName => _Name + "." + _Extension;
-        public string FullPath => _DBPath + "\\" + FullName;
+        public string FullPath => _Path + "\\" + FullName;
         private string _BackUpPath => _Path + "\\backup";
         private string _Password;
         private Logger _Logger;
         private EXmlReader _XmlReader;
+        public EXmlReader XmlReader => _XmlReader;
         private StaffItem _Staff;
 
         #endregion
@@ -54,7 +46,6 @@ namespace ELite
         {
             InitializePath(fullPath);
             _Password = password;
-            Open();
             InitializeLogger();
             InitializeXmlReader();
             InitializeChannels();
@@ -65,7 +56,6 @@ namespace ELite
         {
             InitializePath(path, name, extension);
             _Password = password;
-            Open();
             InitializeLogger();
             InitializeXmlReader();
             InitializeChannels();
@@ -83,6 +73,7 @@ namespace ELite
             _Conn = new SQLiteConnection() { ConnectionString = builder.ConnectionString };
             _Conn.Open();
             _Comm = new SQLiteCommand(_Conn);
+            InitializeRoomProperty();
         }
 
         public void Close()
@@ -119,6 +110,11 @@ namespace ELite
             _XmlReader.Refresh();
         }
 
+        public SQLiteTransaction BeginTransaction()
+        {
+            return _Conn.BeginTransaction();
+        }
+
         #endregion
 
         #region INITIALIZE
@@ -135,7 +131,7 @@ namespace ELite
             }
             else
             {
-                _Path = Environment.CurrentDirectory;
+                _Path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\HROS";
                 _Name = "min";
                 _Extension = "db";
             }
@@ -143,7 +139,10 @@ namespace ELite
 
         private void InitializePath(string path, string name, string extension)
         {
-            if (path == "") path = Environment.CurrentDirectory;
+            if (path == "")
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\HROS\\database";
+            else
+                if (!path.EndsWith("database")) path += "\\database";
             if (name == "") name = "min";
             if (extension == "") extension = "db";
             _Path = path;
@@ -153,13 +152,13 @@ namespace ELite
 
         private void InitializeLogger()
         {
-            _Logger = new Logger(_DBPath, FullName);
+            _Logger = new Logger(_Path, FullName);
             _Logger.Open();
         }
 
         private void InitializeXmlReader()
         {
-            _XmlReader = new EXmlReader(_DBPath, FullName);
+            _XmlReader = new EXmlReader(_Path, FullName);
             _XmlReader.Open();
         }
 
@@ -174,7 +173,30 @@ namespace ELite
 
         #endregion
 
-        #region OPERATIONS_BASE
+        #region Select
+
+        public T FromDataRow<T>(DataRow row) where T : IELiteTableItem, new()
+        {
+            T t = new T();
+            t.LoadFromDataRow(row);
+            return t;
+        }
+
+        public List<T> FromDataTable<T>(DataTable table) where T : IELiteTableItem, new()
+        {
+            List<T> result = new List<T>();
+            foreach(DataRow row in table.Rows)
+            {
+                result.Add(FromDataRow<T>(row));
+            }
+            return result;
+        }
+
+        public List<T> FromSqlString<T>(string sqlString) where T : IELiteTableItem, new()
+        {
+            DataTable table = Select(sqlString);
+            return FromDataTable<T>(table);
+        }
 
         public object ReadValue(string sqlString)
         {
@@ -189,63 +211,76 @@ namespace ELite
             _Comm.CommandText = sqlString;
             return _Comm.ExecuteScalar();
         }
-        
-        public bool IsExisted(string sqlString)
+
+        /// <summary> 返回基本类型列表 </summary>
+        public  List<T> GetItems<T>(string table, string keyName, string condition = "", string orderKey = "")
         {
-            _Comm.CommandText = sqlString;
-            return _Comm.ExecuteNonQuery() > 0;
+            string sqlString = "select " + keyName + " from " + table;
+            if (!String.IsNullOrEmpty(condition))
+                sqlString += " where " + condition;
+            if (!String.IsNullOrEmpty(orderKey))
+                sqlString += " order by " + orderKey;
+            return GetItems<T>(sqlString);
         }
 
-        public bool IsExisted(string table, string condition)
+        /// <summary> 返回基本类型列表 </summary>
+        public List<T> GetItems<T>(string sqlString)
         {
-            return IsExisted("select * from " + table + " where " + condition);
-        }
-
-        private int MaxId(string table, string key = "id")
-        {
-            string sqlString = "select " + key + " from " + table + " order by " + key + " desc";
-            _Comm.CommandText = sqlString;
-            object result = _Comm.ExecuteScalar();
-            if (result == null)
-                return -1;
-            else
-                return (int)result;
-        }
-
-        private void AddOperationLog(string table, Operation operation)
-        {
-            Dictionary<string, object> items = new Dictionary<string, object>()
+            DataTable dt = Select(sqlString);
+            List<T> items = new List<T>();
+            foreach (DataRow row in dt.Rows)
             {
-                {"sid", _Staff.Items.SID },
-                {"Table", table },
-                {"Operation", (int)operation },
-                {"Logged",DateTime.Now.ToString("yyyyMMdd HHmmss.ttt") }
-            };
-            string sqlString = "insert into log_operation " + ItemsToApartString(items);
-            Run(sqlString, Operation.RUN);
-        }
-
-        public bool Run(string sql, Operation operation = Operation.RUN, string table = "")
-        {
-            _Comm.Reset();
-            _Comm.CommandText = sql;
-            try
-            {
-                _Comm.ExecuteNonQuery();
-                if (table != "")
-                    AddOperationLog(table, operation);
-                return true;
+                items.Add((T)(row[0]));
             }
-            catch (Exception e)
-            {
-                _Logger.Log(sql, e.Message);
-                return false;
-            }
+            return items;
         }
 
-        private SQLiteDataReader Read(string sql)
+        /// <summary> 返回基本类型 </summary>
+        public T GetItem<T>(string table, string keyName, string condition = "", string orderKey = "")
+        {
+            string sqlString = "select " + keyName + " from " + table;
+            if (!String.IsNullOrEmpty(condition))
+                sqlString += " where " + condition;
+            if (!String.IsNullOrEmpty(orderKey))
+                sqlString += " order by " + orderKey;
+            return GetItem<T>(sqlString);
+        }
+
+        /// <summary> 返回基本类型 </summary>
+        public T GetItem<T>(string sqlString)
+        {
+            DataTable dt = Select(sqlString);
+            if (dt.Rows.Count < 1) return default(T);
+            return (T)dt.Rows[0][0];
+        }
+
+        private Dictionary<TKey, TValue> GetItemDictionary<TKey, TValue>(string table, 
+            string keyName, string valueName, string condition = "", string orderKey = "")
+        {
+            string sqlString = "select " + keyName + "," + valueName + " from " + table;
+            if (!String.IsNullOrEmpty(condition))
+                sqlString += " where " + condition;
+            if (!String.IsNullOrEmpty(orderKey))
+                sqlString += " order by " + orderKey;
+            return GetItemDictionary<TKey, TValue>(sqlString);
+        }
+
+        private Dictionary<TKey, TValue> GetItemDictionary<TKey,TValue>(string sqlString)
+        {
+            DataTable dt = Select(sqlString);
+            Dictionary<TKey, TValue> itemDict = new Dictionary<TKey, TValue>();
+            foreach (DataRow row in dt.Rows)
+            {
+                itemDict.Add((TKey)row[0], (TValue)row[1]);
+            }
+            return itemDict;
+        }
+
+        public SQLiteDataReader Read(string sql, bool isDesc = false, int limitCount = 0)
         {
             if (sql == null || sql == "") return null;
+            if (isDesc) sql += " desc";
+            if (limitCount > 0) sql += " limit " + limitCount;
             _Comm.CommandText = sql;
             try
             {
@@ -259,16 +294,123 @@ namespace ELite
             return _DataReader;
         }
 
-        public DataTable Select(string sql)
+        public DataTable Select(string sql, bool isDesc = false, int limitCount = 0)
         {
             if (sql == null || sql == "") return null;
+            if (isDesc) sql += " desc";
+            if (limitCount > 0) sql += " limit " + limitCount;
             string tableName = "反正是个没有人看得到的彩蛋，那我写得长一点也没关系吧";
             SQLiteDataAdapter da = new SQLiteDataAdapter(sql, _Conn);
             DataSet ds = new DataSet();
-            da.Fill(ds, tableName);
+            try
+            {
+                da.Fill(ds, tableName);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(sql);
+                throw ex;
+            }
             return ds.Tables[tableName];
         }
 
+        #endregion
+
+        #region Insert
+        
+        internal bool Insert(string table, Dictionary<string, object> items)
+        {
+            return Run("insert into " + table + ToInsertString(items), Operation.INSERT, table);
+        }
+
+        internal bool Insert(string table, Dictionary<string, string> items)
+        {
+            return Run("insert into " + table + ToInsertString(items), Operation.INSERT, table);
+        }
+
+        #endregion
+
+        #region Update
+
+        internal bool Update(string table, Dictionary<string, object> items, string key, object value = null)
+        {
+            if (value == null && !items.ContainsKey(key)) return false;
+            return Run("update " + table + " set " + ToUpdateString(items) +
+                " where " + key + "='" + ToInputString(value) + "'", Operation.UPDATE, table);
+        }
+
+        #endregion
+
+        #region Delete
+
+        internal bool Delete(string table, string key, object value)
+        {
+            if (string.IsNullOrEmpty(key)) return false;
+            string valueString = ToInputString(value);
+            if (string.IsNullOrEmpty(valueString)) return false;
+            return Run("delete from " + table + " where " + key + "='" + valueString + "'", Operation.DELETE, table);
+        }
+
+        #endregion
+
+        #region OPERATIONS_BASE
+
+        internal bool IsExisted(string sqlString)
+        {
+            _Comm.CommandText = sqlString;
+            return _Comm.ExecuteScalar() != null;
+        }
+
+        internal bool IsExisted(string table, string condition)
+        {
+            return IsExisted("select * from " + table + " where " + condition);
+        }
+
+        internal bool IsExisted(string table, string key, object value)
+        {
+            return IsExisted("select * from " + table + " where " + key + "='" + ToInputString(value) + "'");
+        }
+
+        internal int MaxValue(string table, string key = "id")
+        {
+            string sqlString = "select " + key + " from " + table + " order by " + key + " desc";
+            _Comm.CommandText = sqlString;
+            object result = _Comm.ExecuteScalar();
+            return result is null ? -1 : Convert.ToInt32(result);
+        }
+
+        private void AddOperationLog(string table, Operation operation)
+        {
+            Dictionary<string, object> items = new Dictionary<string, object>()
+            {
+                /*{"sid", _Staff.Items.SID },*/
+                {"sid", "0" },
+                {"Target", table },
+                {"Operation", (int)operation }
+            };
+            string sqlString = "insert into log_operation " + ToInsertString(items);
+            Run(sqlString, Operation.RUN);
+        }
+
+        internal bool Run(string sql, Operation operation = Operation.RUN, string table = "")
+        {
+            _Comm.Reset();
+            _Comm.CommandText = sql;
+            //Console.WriteLine(sql);
+            try
+            {
+                _Comm.ExecuteNonQuery();
+                if (table != "")
+                    AddOperationLog(table, operation);
+                return true;
+            }
+            catch (Exception e)
+            {
+                _Logger.Log(sql, e.Message);
+                return false;
+            }
+        }
+        
         #endregion
 
         #region TABLES
@@ -284,19 +426,41 @@ namespace ELite
         {
             if (!ExistTable(tableName)) return;
             string sql = "drop table " + tableName;
-            Run(sql, Operation.DELETETABLE, tableName);
+            Run(sql, Operation.DELETE, tableName);
+        }
+
+        private void ClearTable(string tableName)
+        {
+            Run("delete from " + tableName, Operation.DELETE, tableName);
         }
 
         #endregion
 
-        #region SHARED
+        #region TypeConvert
 
-        private string ItemsToCombineString(Dictionary<string, object> items)
+        private Dictionary<string, T> ToAvailableItems<T>(Dictionary<string, T> items)
         {
-            string result = "";
-            foreach (KeyValuePair<string, object> item in items)
+            return items.Where(item => item.Key.ToLower()!="id" && item.Value != null && !string.IsNullOrEmpty(item.Value.ToString()))
+                .ToDictionary(item => item.Key, item => item.Value);
+        }
+
+        private Dictionary<string, string> ToAvailableInputItems<T>(Dictionary<string, T> items)
+        {
+            return ToAvailableItems(items).ToDictionary(item => item.Key, item => ToInputString(item.Value));
+        }
+
+        private Dictionary<string, string> ToAvailableOutputItems<T>(Dictionary<string, T> items)
+        {
+            return ToAvailableItems(items).ToDictionary(item => item.Key, item => ToOutputString(item.Value));
+        }
+
+        private string ToUpdateString<T>(Dictionary<string, T> items)
+        {
+            items = ToAvailableItems<T>(items);
+            string result = string.Empty;
+            foreach (KeyValuePair<string, T> item in items)
             {
-                result += "," + item.Key + "='" + ItemToString(item.Value) + "'";
+                result += "," + item.Key + "='" + ToInputString(item.Value) + "'";
             }
             if (result == "")
                 return result;
@@ -304,54 +468,41 @@ namespace ELite
                 return result.Substring(1);
         }
 
-        private string ItemsToApartString(Dictionary<string, object> items)
+        private string ToInsertString<T>(Dictionary<string, T> items)
         {
-            return "(" + KeysToString(items) + ") values(" + ValuesToString(items);
+            Dictionary<string, string> availableItems = ToAvailableInputItems<T>(items);
+            return "(" + String.Join(",", availableItems.Keys.ToArray()) + ") values ('" +
+                String.Join("','", availableItems.Values.ToArray()) + "')";
         }
 
-        private string KeysToString(Dictionary<string, object> items)
+        public static string ToInputString(object obj)
         {
-            return String.Join(",", items.Keys.ToArray());
-        }
-
-        private string ValuesToString(Dictionary<string, object> items)
-        {
-            string valueString = "";
-            foreach (object obj in items.Values)
-            {
-                valueString += ",'" + ItemToString(obj) + "'";
-            }
-            if (valueString == "")
-                return valueString;
+            if (obj == null) return string.Empty;
+            Type type = obj.GetType();
+            /*if (objString.EndsWith("00:00:00"))
+                objString = objString.Substring(0, objString.Length - 9);*/
+            if (type == typeof(DateTime))
+                return ((DateTime)obj).ToString("s");
+            else if (type == typeof(bool))
+                return ((bool)obj) ? "1" : "0";
             else
-                return valueString.Substring(1);
+                return obj.ToString().Replace("'", "''");
         }
 
-        public static string ItemToString(object obj)
+        public static string ToOutputString(object obj)
         {
-            string objString = null;
-            if (obj != null)
-            {
-                Type type = obj.GetType();
-                if (type == typeof(DateTime))
-                {
-                    objString = ((DateTime)obj).ToString("yyyy-MM-dd HH:mm:ss");
-                    if (objString.EndsWith("00:00:00"))
-                        objString = objString.Substring(0, objString.Length - 9);
-                }
-                else if (type == typeof(bool))
-                {
-                    objString = ((bool)obj) ? "1" : "0";
-                }
-                else
-                {
-                    objString = obj.ToString();
-                }
-            }
-            return objString;
+            if (obj == null) return string.Empty;
+            Type type = obj.GetType();
+            if (type == typeof(DateTime))
+                return ((DateTime)obj).ToString("yyyy年mm月dd日");
+            else if (type == typeof(bool))
+                return ((bool)obj) ? "爱" : "不爱";
+            else
+                return obj.ToString();
         }
 
         #endregion
 
     }
+
 }

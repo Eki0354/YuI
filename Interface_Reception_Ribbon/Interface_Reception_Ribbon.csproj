@@ -116,25 +116,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="MainWindow\MainWindow_Clipboard.cs" />
+    <Compile Include="ResPage\Page_Res_Clipboard.cs" />
     <Compile Include="MainWindow\MainWindow_Menu.cs" />
     <Compile Include="MainWindow\MainWindow_Res.cs" />
     <Compile Include="MainWindow\MainWindow_Room.cs" />
     <Compile Include="MainWindow\MainWindow_Sale.cs" />
-    <Compile Include="Page_Reservation.xaml.cs">
+    <Compile Include="ResPage\Page_Reservation.xaml.cs">
       <DependentUpon>Page_Reservation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PopupMsg\PopupBorder.xaml.cs">
-      <DependentUpon>PopupBorder.xaml</DependentUpon>
+    <Compile Include="ResPage\ResEditWindow.xaml.cs">
+      <DependentUpon>ResEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PopupMsg\MsgHelper.cs" />
+    <Compile Include="RoomPage\AddRoomWindow.xaml.cs">
+      <DependentUpon>AddRoomWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RoomPage\CellRoomItem.cs" />
     <Compile Include="RoomPage\Page_Room.xaml.cs">
       <DependentUpon>Page_Room.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Page_Sale.xaml.cs">
+    <Compile Include="SalePage\Page_Sale.xaml.cs">
       <DependentUpon>Page_Sale.xaml</DependentUpon>
     </Compile>
     <Compile Include="res_js.cs" />
+    <Compile Include="Win32.cs" />
     <Page Include="Lang\zh-cn.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -151,11 +155,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Page_Reservation.xaml">
+    <Page Include="ResPage\Page_Reservation.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PopupMsg\PopupBorder.xaml">
+    <Page Include="ResPage\ResEditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RoomPage\AddRoomWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -163,7 +171,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Page_Sale.xaml">
+    <Page Include="SalePage\Page_Sale.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -343,22 +351,27 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EkiXmlConfiguration\EkiXmlConfiguration\EkiXmlDocument.csproj">
-      <Project>{691578ca-650c-42e2-8d17-7af9d8f1468c}</Project>
-      <Name>EkiXmlDocument</Name>
+    <ProjectReference Include="..\EControlsLibrary\EControlsLibrary.csproj">
+      <Project>{cad90249-4105-4715-ad07-ed33506e5d07}</Project>
+      <Name>EControlsLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\ELite\ELite.csproj">
       <Project>{50e673fa-efd7-46ca-8841-077930915b43}</Project>
       <Name>ELite</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EmailHelper\EmailHelper.vbproj">
+    <ProjectReference Include="..\EmailHelper\ResHelper for VB.Net.vbproj">
       <Project>{7255db57-0c81-4c27-87c9-84ad2e0481a0}</Project>
-      <Name>EmailHelper</Name>
+      <Name>ResHelper for VB.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\SaleSystem\SaleSystem.csproj">
       <Project>{3843311a-f715-44fd-851c-350888113bf4}</Project>
       <Name>SaleSystem</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\uninstall.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

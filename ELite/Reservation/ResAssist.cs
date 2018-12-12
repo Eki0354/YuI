@@ -17,15 +17,10 @@ namespace ELite.Reservation
             _Conn = conn;
         }
 
-        public List<ListBoxResItem> UncheckedResList()
+        public List<ELiteListBoxResItem> UncheckedResList()
         {
             DataTable dt = _Conn.SelectUncheckedRes();
-            List<ListBoxResItem> resList = new List<ListBoxResItem>();
-            if (dt.Rows.Count < 1) return resList;
-            foreach (DataRow row in dt.Rows)
-            {
-                resList.Add(new ListBoxResItem(row[0].ToString(), row[1].ToString()));
-            }
+            List<ELiteListBoxResItem> resList = _Conn.FromDataTable<ELiteListBoxResItem>(dt);
             return resList;
         }
     }

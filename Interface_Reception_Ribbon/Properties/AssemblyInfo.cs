@@ -8,7 +8,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Hostel Reception Operation System")]
-[assembly: AssemblyDescription("过渡版本，订单工具从VB.Net移植到C#，为进一步整合房态系统")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Hostel Reception Operation System")]
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("18.08.29.0")]
-[assembly: AssemblyFileVersion("18.08.29.0")]
+[assembly: AssemblyVersion("18.09.23.1")]
+[assembly: AssemblyFileVersion("18.09.23.1")]

@@ -123,7 +123,7 @@ namespace ELite.Reservation
             string result = string.Empty;
             foreach (KeyValuePair<string, object> pair in _Dict) 
             {
-                result += "\r\n" + pair.Key + ": " + ELiteConnection.ItemToString(pair.Value);
+                result += "\r\n" + pair.Key + ": " + ELiteConnection.ToInputString(pair.Value);
             }
             return result.Substring(2);
         }
@@ -164,7 +164,7 @@ namespace ELite.Reservation
             Dictionary<string, string> result = new Dictionary<string, string>();
             foreach (KeyValuePair<string, object> item in _Dict)
             {
-                string valueStr = ELiteConnection.ItemToString(item.Value);
+                string valueStr = ELiteConnection.ToInputString(item.Value);
                 if (String.IsNullOrEmpty(valueStr)) continue;
                 result.Add(item.Key, valueStr);
             }
@@ -305,9 +305,12 @@ namespace ELite.Reservation
 
         }
 
-        public ListBoxResItem ListBoxResItem => new ListBoxResItem(
-            ELiteConnection.Channels.Find(c => c.ID == Channel).Title_en_us,
-            ResNumber);
+        public ELiteListBoxResItem ListBoxResItem => new ELiteListBoxResItem()
+        {
+            Channel = ELiteConnection.Channels.Find(c => c.ID == Channel).Title_en_us,
+            ResNumber = ResNumber,
+            FullName = ELiteConnection.DefaultUserName
+        };
 
     }
     
@@ -316,7 +319,7 @@ namespace ELite.Reservation
     /// <summary> 订单基类 </summary>
     public class Booking
     {
-        public static EkiXmlDocument.EXmlReader _XmlReader;
+        public static EXmlReader _XmlReader;
         public DBResItem ResItem { get; set; }
         public DBResUserItem ResUserItem { get; set; }
         public List<DBResRoomItem> ResRoomItemList { get; set; }
@@ -327,7 +330,7 @@ namespace ELite.Reservation
             ResUserItem = new DBResUserItem();
             ResRoomItemList = new List<DBResRoomItem>();
             if (_XmlReader != null) return;
-            _XmlReader = new EkiXmlDocument.EXmlReader(
+            _XmlReader = new EXmlReader(
                 Environment.CurrentDirectory, "booking");
             _XmlReader.Open();
         }
@@ -400,24 +403,5 @@ namespace ELite.Reservation
             return null;
         }
     }
-
-    /// <summary> 用于在ListBox控件中显示简略订单列表。 </summary>
-    public class ListBoxResItem
-    {
-        public string Channel { get; }
-        public string ResNumber { get; set; }
-        public string GuestName { get; set; }
-
-        public ListBoxResItem(string channel, string resNumber, string guestName = "Mrs Panda")
-        {
-            Channel = channel;
-            ResNumber = resNumber;
-            GuestName = guestName;
-        }
-
-        public override string ToString()
-        {
-            return Channel + "\r\n" + GuestName;
-        }
-    }
+    
 }
