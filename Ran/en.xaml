@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key ="text_textblock_account">Please input your account</sys:String>
+    <sys:String x:Key="text_textblock_password">Please input your password</sys:String>
+    <sys:String x:Key ="error_textblock_loginTips">Please input your account</sys:String>
+    <sys:String x:Key="text_button_login">Please input your password</sys:String>
+</ResourceDictionary>

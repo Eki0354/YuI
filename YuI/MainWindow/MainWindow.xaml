@@ -1,0 +1,177 @@
+﻿<RibbonWindow x:Class="YuI.MainWindow"
+              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:sys="clr-namespace:System;assembly=mscorlib"
+              xmlns:local="clr-namespace:YuI"
+              xmlns:prop="clr-namespace:YuI.Properties"
+              mc:Ignorable="d"
+              Title="{x:Static prop:Resources.MainAppTitle}"
+              MinHeight="625" MinWidth="833" Height="833" Width="1400" WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="MainWindow_Closing" KeyDown="MainWindow_KeyDown" Loaded="MainWindow_Loaded">
+    <!--WindowChrome.WindowChrome>
+        <WindowChrome GlassFrameThickness="{x:Static shell:WindowChrome.GlassFrameCompleteThickness}" />
+    </!-->
+    <!--==ERC：EmailReplyCommand，为确认预订回复邮件时使用-->
+    <UserControl>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="139"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Frame x:Name="mainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"/>
+            <Ribbon Grid.Row="0" x:Name="MainRibbon" Title="{DynamicResource text_app_title}" SelectionChanged="MainRibbon_SelectionChanged">
+                <Ribbon.QuickAccessToolBar>
+                    <RibbonQuickAccessToolBar >
+                        <RibbonButton x:Name="qabutton_save" ToolTipTitle="{DynamicResource tips_qabutton_save}" SmallImageSource="../Resources/Images/save.ico"/>
+                        <RibbonButton x:Name="qabutton_undo" ToolTipTitle="{DynamicResource tips_qabutton_undo}" SmallImageSource="../Resources/Images/revoke.ico" Command="ApplicationCommands.Undo" />
+                        <RibbonButton x:Name="qabutton_redo" ToolTipTitle="{DynamicResource tips_qabutton_redo}" SmallImageSource="../Resources/Images/restore.ico" Command="ApplicationCommands.Redo"/>
+                        <RibbonButton x:Name="qabutton_printpreview" ToolTipTitle="{DynamicResource tips_qabutton_printpreview}" Command="ApplicationCommands.PrintPreview"/>
+                    </RibbonQuickAccessToolBar>
+                </Ribbon.QuickAccessToolBar>
+                <Ribbon.ApplicationMenu>
+                    <RibbonApplicationMenu SmallImageSource="../Resources/Images/menu_main_small.ico" LargeImageSource="../Resources/Images/menu_main_large.png">
+                        <RibbonApplicationMenuItem x:Name="menu_update" Header="更新" Click="menu_update_Click"/>
+                        <RibbonApplicationMenuItem x:Name="menu_open" Header="{DynamicResource text_button_open}"/>
+                        <RibbonApplicationMenuItem x:Name="menu_save" Header="{DynamicResource text_button_save}"/>
+                        <RibbonApplicationMenuItem x:Name="menu_saveas" Header="{DynamicResource text_button_saveas}"/>
+                        <RibbonApplicationMenuItem x:Name="menu_printpanel" Header="{DynamicResource text_button_printpanel}"/>
+                        <RibbonSeparator/>
+                        <RibbonApplicationMenuItem x:Name="menu_options" Header="{DynamicResource text_button_options}" Click="menu_options_Click"/>
+                        <RibbonSeparator/>
+                        <RibbonApplicationMenuItem x:Name="menu_exit" Header="{DynamicResource text_button_exit}"/>
+                    </RibbonApplicationMenu>
+                </Ribbon.ApplicationMenu>
+                <RibbonTab x:Name="tab_room" Header ="{DynamicResource text_tab_roomstate_title}" KeyTip="S" IsSelected="True">
+                    <RibbonGroup Header="{DynamicResource text_group_view_title}" KeyTip="V">
+                        <WrapPanel Orientation="Vertical" >
+                            <RibbonRadioButton x:Name="button_view_excel" KeyTip="E" Label="{DynamicResource text_button_view_excel}" IsChecked="True"/>
+                            <RibbonRadioButton x:Name="button_view_bytype" KeyTip="T" Label="{DynamicResource text_button_view_bytype}"/>
+                        </WrapPanel>
+                    </RibbonGroup>
+                    <RibbonGroup Header="{DynamicResource text_group_roominfos_title}" KeyTip="R">
+                        <RibbonButton x:Name="button_roominfos" KeyTip="I" Label="{DynamicResource text_button_roominfos}" ToolTip="{DynamicResource tips_button_roominfos}" LargeImageSource="../Resources/Images/roominfos.ico"/>
+                        <StackPanel Orientation="Vertical">
+                            <WrapPanel Orientation="Horizontal">
+                                <RibbonRadioButton x:Name="button_deposit_0" KeyTip="Z" SmallImageSource="../Resources/Images/deposit-0.ico" ToolTip="{DynamicResource tips_button_deposit_0}"/>
+                                <RibbonRadioButton x:Name="button_deposit_100" KeyTip="H" SmallImageSource="../Resources/Images/deposit-100.ico" ToolTip="{DynamicResource tips_button_deposit_100}"/>
+                                <RibbonRadioButton x:Name="button_deposit_other" KeyTip="O" SmallImageSource="../Resources/Images/deposit-other.ico" ToolTip="{DynamicResource tips_button_deposit_other}"/>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <RibbonRadioButton x:Name="button_paying_unpaid" KeyTip="U" SmallImageSource="../Resources/Images/unpaid.ico" ToolTip="{DynamicResource tips_button_paying_unpaid}"/>
+                                <RibbonRadioButton x:Name="button_paying_deposit" KeyTip="D" SmallImageSource="../Resources/Images/deposit.ico" ToolTip="{DynamicResource tips_button_paying_deposit}"/>
+                                <RibbonRadioButton x:Name="button_paying_guarantee" KeyTip="G" SmallImageSource="../Resources/Images/guarantee.ico" ToolTip="{DynamicResource tips_button_paying_guarantee}"/>
+                                <RibbonRadioButton x:Name="button_paying_paid" KeyTip="P" SmallImageSource="../Resources/Images/paid.ico" ToolTip="{DynamicResource tips_button_paying_paid}"/>
+                            </WrapPanel>
+                            <WrapPanel Orientation="Horizontal">
+                                <RibbonRadioButton x:Name="button_payment_cash" KeyTip="C" SmallImageSource="../Resources/Images/cash.ico" ToolTip="{DynamicResource tips_button_payment_cash}"/>
+                                <RibbonRadioButton x:Name="button_payment_alipay" KeyTip="A" SmallImageSource="../Resources/Images/alipay.ico" ToolTip="{DynamicResource tips_button_payment_alipay}"/>
+                                <RibbonRadioButton x:Name="button_payment_wechat" KeyTip="W" SmallImageSource="../Resources/Images/wechat.ico" ToolTip="{DynamicResource tips_button_payment_wechat}"/>
+                                <RibbonRadioButton x:Name="button_payment_prepaid" KeyTip="S" SmallImageSource="../Resources/Images/webpaid.ico" ToolTip="{DynamicResource tips_button_payment_webpaid}"/>
+                            </WrapPanel>
+                        </StackPanel>
+                        <RibbonSeparator Height="1" Width="65" Margin="5,0,0,0">
+                            <RibbonSeparator.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </RibbonSeparator.RenderTransform>
+                        </RibbonSeparator>
+                        <StackPanel Orientation="Vertical" Margin="-55,0,0,0">
+                            <RibbonCheckBox x:Name="chb_states_autolayout" Label="{DynamicResource text_checkbox_auto_layout}" HorizontalAlignment="Left"/>
+                            <RibbonComboBox x:Name="cob_team" SmallImageSource="../Resources/Images/split_team.ico"/>
+                            <RibbonComboBox x:Name="cob_discount" SmallImageSource="../Resources/Images/split_discount.ico"/>
+                        </StackPanel>
+                        <RibbonButton x:Name="button_seek" Label="{DynamicResource text_button_seek}" LargeImageSource="../Resources/Images/roomseek.ico"/>
+                        <RibbonButton x:Name="button_relate" Label="{DynamicResource text_button_relate}" LargeImageSource="../Resources/Images/roomrelate.ico"/>
+                    </RibbonGroup>
+                    <RibbonGroup Header="显示" KeyTip="D">
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="{DynamicResource text_group_display_title}" Margin="0,-6,0,0" HorizontalAlignment="Center"/>
+                            <DatePicker x:Name="dp_room_from" Margin="0,-4,0,0" SelectedDate="{x:Static sys:DateTime.Now}" Width="100" SelectedDateChanged="selectedDateChanged"/>
+                            <DatePicker x:Name="dp_room_to" SelectedDate="{x:Static sys:DateTime.Now}" Width="100" SelectedDateChanged="selectedDateChanged"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <RibbonCheckBox Label="半月" Foreground="#FF0FA61D"/>
+                            <RibbonCheckBox Label="一月" Foreground="#FF0FA61D"/>
+                            <RibbonCheckBox Label="最长" Foreground="#FF0FA61D"/>
+                        </StackPanel>
+                    </RibbonGroup>
+                    <RibbonGroup Header="{DynamicResource text_group_price_title}" KeyTip="Q">
+                        <RibbonButton x:Name="button_editRoom"
+                                      Click="button_editRoom_Click"
+                                      Label="{DynamicResource text_button_price_room}"
+                                      LargeImageSource="../Resources/Images/price_room.ico"/>
+                        <RibbonButton x:Name="button_price_drinks" Label="{DynamicResource text_button_price_drinks}" LargeImageSource="../Resources/Images/price_drinks.ico"/>
+                        <RibbonButton x:Name="button_price_foods" Label="{DynamicResource text_button_price_foods}" LargeImageSource="../Resources/Images/price_foods.ico"/>
+                        <RibbonSeparator Height="1" Width="65" Margin="5,0,0,0">
+                            <RibbonSeparator.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </RibbonSeparator.RenderTransform>
+                        </RibbonSeparator>
+                        <RibbonButton x:Name="button_view_vip" Label="{DynamicResource text_button_view_vip}" LargeImageSource="../Resources/Images/vip.ico" Margin="-60,0,0,0"/>
+                        <RibbonButton x:Name="button_view_dailyroomstatus" Label="{DynamicResource text_button_view_dailyroomstatus}" LargeImageSource="../Resources/Images/dailyroomstatus.ico"/>
+                    </RibbonGroup>
+                    <RibbonGroup Header="配置" KeyTip="C">
+                        <RibbonButton x:Name="b_matchRoomType"
+                                      Label="匹配房型"
+                                      Click="MatchRoomType"/>
+                        <RibbonButton x:Name="button_test" Label="测试" Click="button_test_Click"/>
+                    </RibbonGroup>
+                </RibbonTab>
+                <RibbonTab x:Name="tab_order" Header="{DynamicResource text_tab_order_title}" KeyTip="O">
+                    <RibbonGroup Header="{DynamicResource text_group_normal_title}">
+                        <RibbonButton x:Name="button_order_add" Label="{DynamicResource text_button_order_add}" LargeImageSource="../Resources/Images/order_add.ico"/>
+                        <RibbonButton x:Name="button_order_edit" Label="{DynamicResource text_button_order_edit}" LargeImageSource="../Resources/Images/order_edit.ico"/>
+                        <RibbonButton x:Name="button_order_delete" Label="{DynamicResource text_button_order_delete}" LargeImageSource="../Resources/Images/order_delete.ico"/>
+                    </RibbonGroup>
+                    <RibbonGroup Header="{DynamicResource text_group_excel_title}">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Margin="0,-3,0,0">
+                                <Label Content="员工："/>
+                                <RibbonComboBox x:Name="rcb_staff">
+                                    <RibbonGallery>
+                                        <RibbonGalleryCategory ItemsSource="{Binding StaffList,
+                                    RelativeSource={RelativeSource AncestorLevel=1,
+                                    AncestorType=RibbonWindow}}"/>
+                                    </RibbonGallery>
+                                </RibbonComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <RibbonButton x:Name="rb_copy" Label="复制详情" LargeImageSource="../Resources/Images/clipboard_details.ico" Click="rb_copy_Click"/>
+                        </StackPanel>
+                    </RibbonGroup>
+                    <RibbonGroup x:Name="rg_quick" Header="快捷">
+                        <RibbonSplitButton x:Name="rsb_emailTemplets" Label="邮件模板" LargeImageSource="../Resources/Images/web_email.ico"/>
+                        <RibbonSplitButton x:Name="rsb_emailReply" Label="预订确认" LargeImageSource="../Resources/Images/res_confirm.ico">
+                            <RibbonButton Label="复制邮箱地址 F1" KeyTip="A" Tag="0" Click="EmailReplyRibbonMenuItems_Clicked"/>
+                            <RibbonButton Label="复制邮件主题 F2" KeyTip="T" Tag="1" Click="EmailReplyRibbonMenuItems_Clicked"/>
+                            <RibbonButton Label="复制邮件正文 F3" KeyTip="M" Tag="2" Click="EmailReplyRibbonMenuItems_Clicked"/>
+                        </RibbonSplitButton>
+                        <RibbonButton Label="获取HW订单" Click="GetHWRes"/>
+                        <RibbonButton Label="查找订单 Ctrl+F" Click="FindRes"/>
+                    </RibbonGroup>
+                    <RibbonGroup x:Name="rg_config" Header="配置">
+                        <RibbonButton Label="更新配置" KeyTip="U" Click="UpdateConfig"/>
+                        <RibbonButton Label="打开配置" KeyTip="C" Click="OpenConfig"/>
+                    </RibbonGroup>
+                </RibbonTab>
+                <RibbonTab x:Name="tab_sale" Header="{DynamicResource text_tab_sale_title}" KeyTip="S">
+                    <RibbonGroup Header="销售">
+                        <RibbonButton Name="rb_sale_addItem" Label="添加物品" Click="rb_sale_addItem_Click"/>
+                    </RibbonGroup>
+                </RibbonTab>
+            </Ribbon>
+        </Grid>
+    </UserControl>
+    
+</RibbonWindow>

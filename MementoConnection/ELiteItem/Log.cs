@@ -1,0 +1,5 @@
+﻿namespace MementoConnection.ELiteItem
+{
+
+
+}

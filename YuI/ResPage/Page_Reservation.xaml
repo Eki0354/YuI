@@ -1,0 +1,68 @@
+﻿<Page x:Class="YuI.Page_Reservation"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:elf="clr-namespace:BookingElf;assembly=BookingElf"
+      xmlns:local="clr-namespace:YuI"
+      xmlns:ec="clr-namespace:YuI.EControls"
+      mc:Ignorable="d" 
+      d:DesignHeight="680" d:DesignWidth="1392"
+      Title="Page_Reservation" Background="White"
+      Initialized="Page_Initialized" Loaded="Page_Loaded">
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Left" Margin="5,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       FontSize="30"
+                       Text="订单列表："/>
+            <elf:BubbleBookingListBox Grid.Row="1"
+                                 x:Name="rlv_res"
+                                 Width="200"/>
+        </Grid>
+        <Grid DockPanel.Dock="Right" Width="200">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="52"/>
+                <RowDefinition Height="0.4*"/>
+                <RowDefinition Height="0.6*"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Content="提示信息：" BorderBrush="Black" BorderThickness="0.5" FontSize="30"/>
+            <TextBox Grid.Row="1" Name="tb_order_error" FontSize="15" IsReadOnly="True" TextWrapping="Wrap"/>
+            <TextBox Grid.Row="2" Name="tb_order_content" FontSize="15" IsReadOnly="True" TextWrapping="Wrap"/>
+        </Grid>
+        <DockPanel>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
+                <Label Content="订单信息：" FontSize="30" BorderBrush="Black" BorderThickness="1"/>
+                <DockPanel Height="150">
+                    <Label FontSize="20" Content="姓名：&#13;&#13;单号：&#13;&#13;邮箱："/>
+                    <TextBox x:Name="tb_mainInfo" FontSize="20" IsReadOnly="True" TextWrapping="WrapWithOverflow" DockPanel.Dock="Right"/>
+                    <!--TextBox x:Name="tb_resDetails" FontSize="15" DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="0.5"/-->
+                </DockPanel>
+            </StackPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                    <Label Content="房间信息："
+                       FontSize="30"
+                       BorderBrush="Black"
+                       BorderThickness="1"/>
+                </StackPanel>
+                <ListBox x:Name="lb_resRooms"
+                         FontSize="16"
+                         Foreground="#FF045D12"
+                         Width="160"
+                         DockPanel.Dock="Left"
+                         SelectionChanged="lb_resRooms_SelectionChanged"/>
+                <DataGrid x:Name="dg_order_room" DockPanel.Dock="Right" Background="White"
+                          CanUserReorderColumns="False" CanUserResizeColumns="False"
+                          CanUserResizeRows="False" CanUserSortColumns="False"
+                          CanUserAddRows="False" FontSize="18">
+
+                </DataGrid>
+            </DockPanel>
+        </DockPanel>
+    </DockPanel>
+</Page>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Interface_Reception_Ribbon.Sale
+﻿namespace Interface_Reception_Ribbon.Sale
 {
     public class CodeHeap
     {

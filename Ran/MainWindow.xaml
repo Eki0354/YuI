@@ -1,0 +1,236 @@
+﻿<Window x:Class="Ran.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Ran"
+        mc:Ignorable="d"
+        Height="264" Width="594"
+        WindowStyle="None"
+        Closing="Window_Closing"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" Loaded="Window_Loaded">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Lang\zh-hk.xaml"/>
+                <ResourceDictionary Source="Lang\ja-jp.xaml"/>
+                <ResourceDictionary Source="Lang\ko-kr.xaml"/>
+                <ResourceDictionary Source="Lang\de-de.xaml"/>
+                <ResourceDictionary Source="Lang\en-us.xaml"/>
+                <ResourceDictionary Source="Lang\zh-cn.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <ControlTemplate x:Key="ImageButtonTemplate" TargetType="{x:Type local:ImageButton}">
+                <Rectangle x:Name="bgrect">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding ImgPath, RelativeSource={RelativeSource TemplatedParent}}" Stretch="UniformToFill" Viewbox="0,0,0.25,1" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="bgrect" Property="Fill">
+                            <Setter.Value>
+                                <ImageBrush ImageSource="{Binding ImgPath, RelativeSource={RelativeSource TemplatedParent}}" Stretch="UniformToFill" Viewbox="0.25,0,0.25,1" />
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter TargetName="bgrect" Property="Fill">
+                            <Setter.Value>
+                                <ImageBrush ImageSource="{Binding ImgPath, RelativeSource={RelativeSource TemplatedParent}}" Stretch="UniformToFill" Viewbox="0.5,0,0.25,1" />
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter TargetName="bgrect" Property="Fill">
+                            <Setter.Value>
+                                <ImageBrush ImageSource="{Binding ImgPath, RelativeSource={RelativeSource TemplatedParent}}" Stretch="UniformToFill" Viewbox="0.75,0,0.25,1" />
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <ControlTemplate x:Key="BGChangeButtonTemplate" TargetType="{x:Type local:BGChangeButton}">
+                <Border Name="Border" BorderBrush="{x:Null}"
+                    Background="{Binding NormalBG, RelativeSource={RelativeSource TemplatedParent}}">
+                    <ContentPresenter RecognizesAccessKey="True"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Border" Property="Background" Value="{Binding MouseOverBG, RelativeSource={RelativeSource TemplatedParent}}"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter TargetName="Border" Property="Background" Value="{Binding PressedBG, RelativeSource={RelativeSource TemplatedParent}}"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter TargetName="Border" Property="Background" Value="{Binding DisabledBG, RelativeSource={RelativeSource TemplatedParent}}"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
+        <Grid.Background>
+            <ImageBrush ImageSource="pack://siteoforigin:,,,/Images/body_kr_gray.png"/>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              Margin="20,10,10,10">
+            <Image Source="pack://siteoforigin:,,,/Images/blur.png"
+               Opacity="0.5"
+               Stretch="Fill">
+                <Image.Effect>
+                    <BlurEffect Radius="10"></BlurEffect>
+                </Image.Effect>
+            </Image>
+            <StackPanel Orientation="Vertical"
+                    Margin="10,10,10,10">
+                <ComboBox x:Name="cbAccount"
+                          ItemsSource="{Binding APTXItems, 
+                    RelativeSource={RelativeSource AncestorLevel=1,AncestorType={x:Type local:MainWindow}}}"
+                      Width="200"
+                      IsReadOnly="True"
+                      HorizontalAlignment="Left"
+                 BorderBrush="#FFCDCED0"
+                 Background="{x:Null}"
+                 Foreground="Black"
+                 BorderThickness="1"
+                 FontSize="16"
+                          SelectionChanged="cbAccount_SelectionChanged"/>
+                <PasswordBox x:Name="tbPassword"
+                         Margin="0,10,0,0"
+                     MaxLength="20"
+                     Width="200"
+                     HorizontalAlignment="Left"
+                     BorderBrush="#FFCDCED0"
+                     Background="{x:Null}"
+                     Foreground="#FFEEF1F4"
+                     BorderThickness="1"
+                     SelectionBrush="#FF1673BF"
+                     FontSize="16" Height="22.32"/>
+                <CheckBox Click="RemPassCheckBox_Click"
+                          IsChecked="True"
+                          x:Name="cbSavePassword"
+                          Margin="0,20,0,0"
+                          Content="{DynamicResource text_checkbox_rempw}"
+                          HorizontalAlignment="Left"/>
+                <CheckBox Click="AutoCheckBox_Click"
+                          IsEnabled="False"
+                          x:Name="cbAutoLogin"
+                          Margin="0,10,0,0"
+                          Content="{DynamicResource text_checkbox_auto}"/>
+                <Popup x:Name="ppLogin"
+                       IsOpen="False"
+                       PlacementTarget="{Binding ElementName=tbPassword}"
+                       AllowsTransparency="True"
+                       PopupAnimation="Slide"
+                       Grid.RowSpan="6">
+                    <Canvas Width="250" Height="25">
+                        <TextBlock Text="{DynamicResource text_tips_loginfailed}"
+                                   FontSize="12"
+                                   FontWeight="Bold" Foreground="#FFDA807D"/>
+                    </Canvas>
+                </Popup>
+            </StackPanel>
+        </Grid>
+        <local:BGChangeButton Click="LoginButton_Click"
+                              Content="{DynamicResource text_button_login}"
+                              TextBlock.TextAlignment="Center"
+                              Grid.Column="1"
+                              Grid.Row="2"
+                              Width="208"
+                              HorizontalAlignment="Center"
+                              NormalBG="#FF0D90E4"
+                              MouseOverBG="#FF1A83C7"
+                              PressedBG="#FF096092"
+                              DisabledBG="#FF76797B"
+                              Template="{StaticResource BGChangeButtonTemplate}"
+                              FontSize="30"
+                              Margin="0,10,0,10"/>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalAlignment="Right" Width="120">
+            <local:ImageButton x:Name="bConfig"
+                               Click="ConfigButton_Click"
+                           Height="32"
+                           Width="40"
+                           ImgPath="Ran;component/Images/config.png"
+                           Template="{StaticResource ImageButtonTemplate}"/>
+            <local:ImageButton Click="MinButton_Click"
+                           Height="32"
+                           Width="40"
+                           ImgPath="Ran;component/Images/min.png"
+                           Template="{StaticResource ImageButtonTemplate}"/>
+            <local:ImageButton Click="CloseButton_Click"
+                           Height="32"
+                           Width="40"
+                           ImgPath="Ran;component/Images/close.png"
+                           Template="{StaticResource ImageButtonTemplate}"/>
+        </StackPanel>
+        <Popup x:Name="configPopup"
+               IsOpen="False"
+               StaysOpen="False"
+               PlacementTarget="{Binding ElementName=bConfig}"
+               AllowsTransparency="True"
+               PopupAnimation="Slide">
+            <StackPanel Width="150" Background="#FFB9CED6" Orientation="Vertical">
+                <MenuItem x:Name="menu_signup" Click="menu_signup_Click" Header="{DynamicResource text_config_signup}" Height="22.8" Width="200">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="/Ran;component/Images/signup.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem IsEnabled="False" x:Name="menu_forgotpassword" Click="menu_forgotpassword_Click" Header="{DynamicResource text_config_forgotpw}" Height="22.8" Width="200" Canvas.Top="22.8">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="/Ran;component/Images/forgot password.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="menu_options" Click="menu_options_Click" Header="{DynamicResource text_config_options}" Height="22.8" Width="200" Canvas.Top="45.6">
+                    <MenuItem.Icon>
+                        <Image Width="16" Height="16" Source="/Ran;component/Images/settings.ico" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="menu_about"
+                          Click="menu_about_Click"
+                          Header="{DynamicResource text_config_about}"/>
+            </StackPanel>
+        </Popup>
+        <local:ImageButton Visibility="Collapsed"
+                           Click="WechatButton_Click"
+                           x:Name="wechatButton"
+                           HorizontalAlignment="Left"
+                           Height="24"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Bottom"
+                           Width="24"
+                           ImgPath="Images/wechat.png"
+                           Template="{DynamicResource ImageButtonTemplate}"
+                           Grid.Row="2"/>
+        <Popup x:Name="wechatPopup" IsOpen="False" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade" VerticalOffset="-150" Grid.RowSpan="3">
+            <Canvas Width="128" Height="128">
+                <Canvas.Background>
+                    <ImageBrush ImageSource="Images/wechatcode.png"/>
+                </Canvas.Background>
+            </Canvas>
+        </Popup>
+        <Popup x:Name="fpPopup" IsOpen="False" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade" VerticalOffset="-200" HorizontalOffset="-210" Grid.RowSpan="3">
+            <Canvas Width="300" Height="200" Background="#FF4E894A">
+                <TextBlock TextWrapping="Wrap" FontSize="16" Height="180" Width="280" Canvas.Left="10" Canvas.Top="10" Text="{DynamicResource text_tips_forgotpw}"/>
+            </Canvas>
+        </Popup>
+        <Popup x:Name="aboutPopup" IsOpen="False" StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade" VerticalOffset="-200" HorizontalOffset="-210" Grid.RowSpan="3">
+            <Canvas Width="300" Height="200" Background="#FF4E894A">
+                <TextBlock TextWrapping="Wrap" Canvas.Left="10" Canvas.Top="87.8" Width="282.547" Height="102.2" Text="{DynamicResource text_tips_about}"/>
+            </Canvas>
+        </Popup>
+    </Grid>
+</Window>
