@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Dobby>
+  <root name="Current">
+    <path type="1" name="sp.db" title="SavedPassword"/>
+    <path type="0" name="Logs" title="UnhandledExceptionLog"/>
+    <path type="0" name="backup" title="BackupApplicationDataFile"/>
+    
+  </root>
+</Dobby>

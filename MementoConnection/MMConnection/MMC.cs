@@ -24,6 +24,7 @@ namespace MementoConnection
         static MMConnection()
         {
             Init();
+            InitLogTable_LogIn();
         }
 
         #region BASE
@@ -50,7 +51,7 @@ namespace MementoConnection
         public static void Backup(this SQLiteConnection conn)
         {
             string sourceFilePath = MementoPath.DataBaseDirectory;
-            string destFileDirectoryPath = MementoPath.DataBaseDirectory.GetParentDirectory() + @"\Backup";
+            string destFileDirectoryPath = Path.GetDirectoryName(sourceFilePath) + @"\Backup";
             string destFilePath = destFileDirectoryPath +
                 DateTime.Now.ToString("yyyyMMdd HHmmss.fff") + ".bk";
             if (!Directory.Exists(destFileDirectoryPath))

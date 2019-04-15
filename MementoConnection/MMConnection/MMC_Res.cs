@@ -70,9 +70,9 @@ namespace MementoConnection
 
         public static DataTable FindResByResNumberOrFullName(string keyword)
         {
-            return Select("select [id],State,Channel,ResNumber,FullName from info_res,info_user where " +
-                "info_res.uid=info_user.uid and (ResNumber LIKE \'%" + keyword + "%\' OR " +
-                "FullName LIKE \'%" + keyword + "%\')");
+            return Select(string.Format("select [id],State,Channel,ResNumber,FullName from info_res,info_user where " +
+                "info_res.uid=info_user.uid and (ResNumber LIKE \'%{0}%\' OR " +
+                "FullName LIKE \'%{0}%\')", keyword));
         }
         
         public static int? GetTypeByMatch(string matchText)

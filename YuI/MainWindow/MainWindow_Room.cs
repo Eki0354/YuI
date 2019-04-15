@@ -11,7 +11,7 @@ namespace YuI
 
         private void button_test_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
 
         private void InitializeControls_Room()

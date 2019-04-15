@@ -110,6 +110,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Feb\bin\Debug\feb.dll</HintPath>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
@@ -150,6 +153,7 @@
       <DependentUpon>YearMonthSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow\MainWindow_NotifyIcon.cs" />
+    <Compile Include="MainWindow\MainWindow_Timer.cs" />
     <Compile Include="ResPage\Page_Res_Clipboard.cs" />
     <Compile Include="MainWindow\MainWindow_Menu.cs" />
     <Compile Include="MainWindow\MainWindow_Res.cs" />
@@ -194,6 +198,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PageResDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ResPage\Page_Reservation.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -252,6 +260,7 @@
     <Resource Include="Resources\Images\split_discount.ico" />
     <Resource Include="Resources\Images\unpaid.ico" />
     <Resource Include="Resources\Images\vip.ico" />
+    <Resource Include="Resources\Images\yui.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\roominfos.ico" />
@@ -305,10 +314,6 @@
     <Resource Include="Resources\Images\split_team.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BetaUpdateApp\BetaUpdateApp.csproj">
-      <Project>{e67f6b16-ce6b-4a71-a76a-f4d659edfa79}</Project>
-      <Name>BetaUpdateApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BookingElf\BookingElf.csproj">
       <Project>{fb1bf83d-2885-47c4-b680-cfae03a7b838}</Project>
       <Name>BookingElf</Name>
@@ -335,9 +340,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\isSearchResult.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Images\yui.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.2">

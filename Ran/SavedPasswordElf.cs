@@ -4,44 +4,50 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using IOExtension;
 
 namespace Ran
 {
     public class SavedPasswordElf
     {
-        public static string PasswordFilePath = Environment.CurrentDirectory + @"\sp.db";
-        
-        public static Dictionary<string,string> ReadPasswords()
+        public static Dictionary<string, string> ReadPasswords()
         {
             Dictionary<string, string> passwords = new Dictionary<string, string>();
-            FileStream fs = new FileStream(PasswordFilePath, FileMode.OpenOrCreate);
-            StreamReader sr = new StreamReader(fs);
-            while (!sr.EndOfStream)
+            using (FileStream fs = new FileStream(MementoPath.SavedPasswordFilePath, FileMode.OpenOrCreate))
             {
-                string text = sr.ReadLine();
-                int index = text.IndexOf(";;;");
-                passwords.Add(text.Substring(0, index), text.Substring(index + 3));
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        string text = sr.ReadLine();
+                        int index = text.IndexOf(";;;");
+                        if (index < 0) continue;
+                        passwords.Add(text.Substring(0, index), text.Substring(index + 3));
+                    }
+                }
             }
-            sr.Close();
-            fs.Close();
             return passwords;
         }
 
         public static void SavePassword(string name,string password)
         {
+            if (MementoPath.SavedPasswordFilePath.Contains("OneDrive") &&
+                Environment.UserName != "Mrs Panda") return;
             Dictionary<string, string> passwords = ReadPasswords();
             if (passwords.ContainsKey(name))
                 passwords[name] = password;
             else
                 passwords.Add(name, password);
-            FileStream fs = new FileStream(PasswordFilePath, FileMode.OpenOrCreate);
-            StreamWriter sw = new StreamWriter(fs);
-            foreach(KeyValuePair<string, string> pair in passwords)
+            using (FileStream fs = new FileStream(MementoPath.SavedPasswordFilePath, FileMode.OpenOrCreate))
             {
-                sw.WriteLine(pair.Key + ";;;" + pair.Value);
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    foreach (KeyValuePair<string, string> pair in passwords)
+                    {
+                        sw.WriteLine(pair.Key + ";;;" + pair.Value);
+                    }
+                }
             }
-            sw.Close();
-            fs.Close();
         }
     }
 }

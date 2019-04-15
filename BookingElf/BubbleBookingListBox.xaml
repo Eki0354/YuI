@@ -6,40 +6,45 @@
          xmlns:local="clr-namespace:BookingElf"
          mc:Ignorable="d" 
          Background="White"
-         d:DesignHeight="500"
-         d:DesignWidth="200"
-         SelectionMode="Extended"
+         d:DesignHeight="495"
+         d:DesignWidth="264"
+         MinHeight="66"
+         MinWidth="264"
          SelectionChanged="ListBox_SelectionChanged"
          ItemsSource="{Binding Bubbles, RelativeSource={RelativeSource Self}}"
          Style="{DynamicResource BubbleBookingListBoxStyle}"
          ItemContainerStyle="{DynamicResource BubbleBookingListBoxItemStyle}">
     <ListBox.Resources>
-        <Style x:Key="FocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#1F26A0DA"/>
-        <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#a826A0Da"/>
-        <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#FFDADADA"/>
-        <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
-        <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#3D26A0DA"/>
-        <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF26A0DA"/>
-        <Style x:Key="BubbleBookingListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Padding" Value="4,1"/>
-            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border x:Name="Bd"
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="BasicDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="FocusVisual">
+                <Setter Property="Control.Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <SolidColorBrush x:Key="Item.MouseOver.Background" Color="#1F26A0DA"/>
+            <SolidColorBrush x:Key="Item.MouseOver.Border" Color="#a826A0Da"/>
+            <SolidColorBrush x:Key="Item.SelectedInactive.Background" Color="#FFDADADA"/>
+            <SolidColorBrush x:Key="Item.SelectedInactive.Border" Color="#FFDADADA"/>
+            <SolidColorBrush x:Key="Item.SelectedActive.Background" Color="#3D26A0DA"/>
+            <SolidColorBrush x:Key="Item.SelectedActive.Border" Color="#FF26A0DA"/>
+            <Style x:Key="BubbleBookingListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Padding" Value="4,1"/>
+                <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Border x:Name="Bd"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="White"
                                 BorderBrush="LightGray"
@@ -47,190 +52,185 @@
                                 SnapsToDevicePixels="true"
                                 CornerRadius="5"
                                 Margin="1,3,1,3">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0"
-                                           Text="{Binding Channel}"
-                                           VerticalAlignment="Stretch"
-                                           FontSize="{Binding ChannelFontSize, RelativeSource={RelativeSource AncestorLevel=1, AncestorType={x:Type local:BubbleBookingListBox}}}"
-                                           Foreground="#FF6D6F71"/>
-                                <TextBlock Grid.Row="1"
+                                <Grid Margin="2,10,2,10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="16"/>
+                                        </Grid.ColumnDefinitions>
+                                        <local:StateLable Grid.Column="0"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Style="{DynamicResource StateLabelStyle}"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Channel}"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="16"
+                                                   Margin="5,0,0,0"
+                                                   Foreground="#FF6D6F71"/>
+                                        <TextBlock Grid.Column="2"
+                                                   Margin="5,0,5,0"
+                                                   Text="{Binding DisplayRes}"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Right"
+                                                   Foreground="#FF6D6F71"/>
+                                        <Image x:Name="img"
+                                               Grid.Column="3"
+                                               Visibility="Collapsed"
+                                               Source="/Resources/Images/isSearchResult.ico"
+                                               Width="16"
+                                               Height="16"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <TextBlock Grid.Row="1"
+                                               FontSize="16"
                                            Text="{Binding DisplayName}"
                                            VerticalAlignment="Stretch"
-                                           FontSize="{Binding NameFontSize, RelativeSource={RelativeSource AncestorLevel=1, AncestorType={x:Type local:BubbleBookingListBox}}}"
-                                           Foreground="#FF7D2313"/>
-                                <Image x:Name="img"
-                                       Grid.Row="0"
-                                       Visibility="Hidden"
-                                       Source="/Resources/Images/isSearchResult.ico"
-                                       HorizontalAlignment="Right"
-                                       VerticalAlignment="Top"
-                                       Margin="0,1,1,0"
-                                       Width="16"
-                                       Height="16"/>
-                                <TextBlock x:Name="tb"
-                                           Grid.Row="1"
-                                           Margin="0,1,1,0"
-                                           Visibility="Hidden"
-                                           HorizontalAlignment="Right"
-                                           VerticalAlignment="Top"/>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <DataTrigger Binding="{Binding IsSearchResult}" Value="True">
-                                <Setter TargetName="img" Property="Visibility" Value="Visible"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding State}" Value="Changed">
-                                <Setter TargetName="tb" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="tb" Property="Text" Value="更改"/>
-                                <Setter TargetName="tb" Property="Foreground" Value="#FF3D7CD2"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding State}" Value="Cancelled">
-                                <Setter TargetName="tb" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="tb" Property="Text" Value="取消"/>
-                                <Setter TargetName="tb" Property="Foreground" Value="Red"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding State}" Value="Invalid">
-                                <Setter TargetName="tb" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="tb" Property="Text" Value="无效"/>
-                                <Setter TargetName="tb" Property="Foreground" Value="Gray"/>
-                            </DataTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsMouseOver" Value="True"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.MouseOver.Border}"/>
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="Selector.IsSelectionActive" Value="False"/>
-                                    <Condition Property="IsSelected" Value="True"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Border}"/>
-                            </MultiTrigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="Selector.IsSelectionActive" Value="True"/>
-                                    <Condition Property="IsSelected" Value="True"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Border}"/>
-                            </MultiTrigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FFABADB3"/>
-        <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF"/>
-        <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="#FFD9D9D9"/>
-        <Style x:Key="BubbleBookingListBoxStyle" TargetType="{x:Type ListBox}">
-            <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ListBox.Static.Border}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
-            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
-            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBox}">
-                        <Border x:Name="Bd"
+                                           Foreground="#FF612113"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsSearchResult}" Value="True">
+                                    <Setter TargetName="img" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.MouseOver.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.MouseOver.Border}"/>
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedInactive.Border}"/>
+                                </MultiTrigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                                        <Condition Property="IsSelected" Value="True"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource Item.SelectedActive.Border}"/>
+                                </MultiTrigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFFFFFFF"/>
+            <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FFABADB3"/>
+            <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF"/>
+            <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="#FFD9D9D9"/>
+            <Style x:Key="BubbleBookingListBoxStyle" TargetType="{x:Type ListBox}">
+                <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource ListBox.Static.Border}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+                <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBox}">
+                            <Border x:Name="Bd"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{TemplateBinding Background}"
                                 Padding="1"
                                 SnapsToDevicePixels="true">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="1*"/>
-                                </Grid.RowDefinitions>
-                                <WrapPanel Grid.Row="0"
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <WrapPanel Grid.Row="0"
                                            Orientation="Horizontal"
                                            VerticalAlignment="Center"
                                            Margin="0,2,0,0">
-                                    <TextBlock Text="筛选：" VerticalAlignment="Center"/>
-                                    <ComboBox IsReadOnly="True"
+                                        <TextBlock Text="筛选：" VerticalAlignment="Center"/>
+                                        <ComboBox IsReadOnly="True"
                                               VerticalAlignment="Center"
                                               ItemsSource="{Binding Channels,
                                         RelativeSource={RelativeSource AncestorLevel=1,
                                         AncestorType={x:Type local:BubbleBookingListBox}}}"/>
-                                    <CheckBox Content="搜索结果"
+                                        <CheckBox Content="搜索结果"
                                               VerticalAlignment="Center"/>
-                                </WrapPanel>
-                                <Separator Grid.Row="1"/>
-                                <ScrollViewer Grid.Row="2"
+                                    </WrapPanel>
+                                    <Separator Grid.Row="1"/>
+                                    <ScrollViewer Grid.Row="2"
                                               Focusable="false"
                                               Padding="{TemplateBinding Padding}">
-                                    <ScrollViewer.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem x:Name="mi_hideS"
+                                        <ScrollViewer.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem x:Name="mi_hideS"
                                                       Header="隐藏选中"/>
-                                            <Separator/>
-                                            <MenuItem x:Name="mi_hideL"
+                                                <Separator/>
+                                                <MenuItem x:Name="mi_hideL"
                                                       Header="隐藏列表"/>
-                                            <Separator/>
-                                            <MenuItem x:Name="mi_markS"
+                                                <Separator/>
+                                                <MenuItem x:Name="mi_markS"
                                                       Header="标记选中">
-                                                <MenuItem Header="正常"/>
-                                                <MenuItem Header="更改"/>
-                                                <MenuItem Header="取消"/>
-                                                <MenuItem Header="无效"/>
-                                            </MenuItem>
-                                            <Separator/>
-                                            <MenuItem x:Name="mi_markL"
+                                                    <MenuItem Header="正常"/>
+                                                    <MenuItem Header="更改"/>
+                                                    <MenuItem Header="取消"/>
+                                                    <MenuItem Header="无效"/>
+                                                </MenuItem>
+                                                <Separator/>
+                                                <MenuItem x:Name="mi_markL"
                                                       Header="标记列表">
-                                                <MenuItem Header="正常"/>
-                                                <MenuItem Header="更改"/>
-                                                <MenuItem Header="取消"/>
-                                                <MenuItem Header="无效"/>
-                                            </MenuItem>
-                                            <MenuItem Header="删除选中"
+                                                    <MenuItem Header="正常"/>
+                                                    <MenuItem Header="更改"/>
+                                                    <MenuItem Header="取消"/>
+                                                    <MenuItem Header="无效"/>
+                                                </MenuItem>
+                                                <MenuItem Header="删除选中"
                                                       Click="DeleteMenuItem_Click"/>
-                                        </ContextMenu>
-                                    </ScrollViewer.ContextMenu>
-                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                </ScrollViewer>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Border}"/>
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsGrouping" Value="true"/>
-                                    <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
-                            </MultiTrigger>
-                            <Trigger Property="SelectedIndex" Value="-1">
-                                <Setter TargetName="mi_hideS" Property="IsEnabled" Value="False"/>
-                                <Setter TargetName="mi_markS" Property="IsEnabled" Value="False"/>
-                            </Trigger>
-                            <Trigger Property="HasItems" Value="False">
-                                <Setter TargetName="mi_hideL" Property="IsEnabled" Value="False"/>
-                                <Setter TargetName="mi_markL" Property="IsEnabled" Value="False"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                                            </ContextMenu>
+                                        </ScrollViewer.ContextMenu>
+                                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Border}"/>
+                                </Trigger>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsGrouping" Value="true"/>
+                                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                                </MultiTrigger>
+                                <Trigger Property="SelectedIndex" Value="-1">
+                                    <Setter TargetName="mi_hideS" Property="IsEnabled" Value="False"/>
+                                    <Setter TargetName="mi_markS" Property="IsEnabled" Value="False"/>
+                                </Trigger>
+                                <Trigger Property="HasItems" Value="False">
+                                    <Setter TargetName="mi_hideL" Property="IsEnabled" Value="False"/>
+                                    <Setter TargetName="mi_markL" Property="IsEnabled" Value="False"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
     </ListBox.Resources>
 </ListBox>

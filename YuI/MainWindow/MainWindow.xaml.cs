@@ -21,22 +21,21 @@ namespace YuI
         RibbonTab _SelectedRibbonTab = null;
         static List<Dictionary<string, string>> order_items = new List<Dictionary<string, string>>();
         static List<DataTable> order_rooms = new List<DataTable>();
+        public static Ran.MainWindow WinRan = null;
 
         public MainWindow()
         {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Ran.MainWindow.UnhandledExceptionEventHandler);
             InitializeComponent();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            var w = new Ran.MainWindow();
-            w.Owner = this;
-            w.ShowDialog();
-            if (MMC.LoggedInSID < 0) Application.Current.Shutdown();
-            //if (Process.GetProcessesByName("Ran").Length < 1) Environment.Exit(0);
             _pageSale = new Page_Sale();
             _pageRoom = new Page_Room();
             _pageRes = new Page_Reservation();
+            SummonRan();
+            if (MMC.LoggedInSID < 0) Application.Current.Shutdown();
             InitNotifyIcon();
             MainRibbon_SelectionChanged(null, null);
             InitializeControls();
@@ -44,6 +43,14 @@ namespace YuI
             this.Closed += RemoveNotifyIcon;
         }
         
+        private void SummonRan()
+        {
+            WinRan = new Ran.MainWindow();
+            WinRan.Owner = this;
+            WinRan.ShowDialog();
+            _pageRes.MementoAPTX = this.MementoAPTX;
+        }
+
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
             //窗口最小化时隐藏任务栏图标
@@ -89,13 +96,13 @@ namespace YuI
                 switch (e.Key)
                 {
                     case Key.F1:
-                        CopyEmailReplies("0");
+                        _pageRes.EmailAddressCopyButton_Click(null, null);
                         break;
                     case Key.F2:
-                        CopyEmailReplies("1");
+                        _pageRes.EmailThemeCopyButton_Click(null, null);
                         break;
                     case Key.F3:
-                        CopyEmailReplies("2");
+                        _pageRes.EmailBodyCopyButton_Click(null, null);
                         break;
                 }
                 if ((e.KeyboardDevice.IsKeyDown(Key.LeftCtrl) ||
@@ -116,5 +123,9 @@ namespace YuI
             process.Start();
         }
 
+        private void MenuSwitchStaff_Click(object sender, RoutedEventArgs e)
+        {
+            SummonRan();
+        }
     }
 }

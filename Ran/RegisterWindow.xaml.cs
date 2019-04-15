@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,14 @@ namespace Ran
             InitializeComponent();
         }
 
+        private static int GetMaxSID()
+        {
+            if( MMC.GetMaxSIDStaff() is DataRow row)
+                return APTXItem.FromDataRow(row).SID;
+            else
+                return 0;
+        }
+
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             string pw1 = pb1.Password;
@@ -33,7 +42,7 @@ namespace Ran
                 MessageBox.Show("注册失败！\r\n密码不能为空或两次输入的密码不一样！");
             string nickname = tbNickname.Text;
             if (string.IsNullOrEmpty(nickname)) MessageBox.Show("注册失败！\r\n昵称不能为空！");
-            int maxSID = MMC.GetStaffList.Rows.Count + 1;
+            int maxSID = GetMaxSID() + 1;
             Dictionary<string, object> aptxDict = new Dictionary<string, object>()
             {
                 {"sid", maxSID },

@@ -21,13 +21,21 @@ namespace BookingElf
     /// <summary> 仅用于在BubbleListBox中绑定显示的数据类型 </summary>
     public class BubbleBookingItem
     {
+        static int DisplayNameLength { get; } = 22;
+        static int DisplayResLength { get; } = 12;
+
         public string Channel { get; }
         public string FullName { get; }
         public string ResNumber { get; }
+        public string DisplayRes => ResNumber.Length > DisplayResLength ? string.Format(
+            "...{0}", ResNumber.Substring(ResNumber.Length - DisplayResLength + 3)) :
+            ResNumber;
         public string DisplayName => 
-            FullName.Length > 20 ? FullName.Substring(0, 17) + "..." : FullName;
+            FullName.Length > DisplayNameLength ? 
+            FullName.Substring(0, DisplayNameLength - 3) + "..." : FullName;
         public BubbleBookingState State { get; set; } = BubbleBookingState.Normal;
         public bool IsSearchResult { get; set; } = false;
+        public bool IsDeleteMarked { get; set; } = false;
 
         public BubbleBookingItem(string channel, string fullName, string resNumber)
         {
@@ -67,6 +75,14 @@ namespace BookingElf
         public bool CompareToFullName(string fullName) =>
             this.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase);
 
+        public BubbleBookingItem ToSearchResult()
+        {
+            return new BubbleBookingItem(this.Channel, this.FullName, this.ResNumber)
+            {
+                State = this.State,
+                IsSearchResult = true
+            };
+        }
     }
 
     #endregion
@@ -167,6 +183,15 @@ namespace BookingElf
             return -1;
         }
 
+        public int AxIndexOfFullName(string fullName)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (this[i].FullName.Contains(fullName)) return i;
+            }
+            return -1;
+        }
+
         #endregion
 
         #region First
@@ -177,19 +202,19 @@ namespace BookingElf
             {
                 return this.First(rItem => rItem.AxEquals(item));
             }
-            catch(InvalidOperationException ex)
+            catch
             {
                 return null;
             }
         }
-
+        
         public BubbleBookingItem FirstOfResNumber(string resNumber)
         {
             try
             {
                 return this.First(item => item.CompareToResNumber(resNumber));
             }
-            catch (InvalidOperationException ex)
+            catch
             {
                 return null;
             }
@@ -199,15 +224,35 @@ namespace BookingElf
         {
             try
             {
-                return this.First(item => item.CompareToResNumber(fullName));
+                return this.First(item => item.CompareToFullName(fullName));
             }
-            catch (InvalidOperationException ex)
+            catch
+            {
+                return null;
+            }
+        }
+
+        public BubbleBookingItem AxFirstOfFullName(string fullName)
+        {
+            try
+            {
+                return this.First(item => item.FullName.Contains(fullName));
+            }
+            catch
             {
                 return null;
             }
         }
 
         #endregion
+
+        public List<BubbleBookingItem> DeleteMarkedItems =>
+            this.Where(item => item.IsDeleteMarked).ToList();
+
+        public void RemoveDeleteMarkedItems()
+        {
+            this.DeleteMarkedItems.ForEach(item => this.Items.Remove(item));
+        }
 
         public static BubbleBookingItemCollection FromDataTable(DataTable table, bool isSearchResult = false)
         {

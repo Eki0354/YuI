@@ -31,6 +31,7 @@
                 </Ribbon.QuickAccessToolBar>
                 <Ribbon.ApplicationMenu>
                     <RibbonApplicationMenu SmallImageSource="../Resources/Images/menu_main_small.ico" LargeImageSource="../Resources/Images/menu_main_large.png">
+                        <RibbonApplicationMenuItem x:Name="menuSwitchStaff" Header="切换账号" Click="MenuSwitchStaff_Click"/>
                         <RibbonApplicationMenuItem x:Name="menu_update" Header="更新" Click="menu_update_Click"/>
                         <RibbonApplicationMenuItem x:Name="menu_open" Header="{DynamicResource text_button_open}"/>
                         <RibbonApplicationMenuItem x:Name="menu_save" Header="{DynamicResource text_button_save}"/>
@@ -135,28 +136,11 @@
                     </RibbonGroup>
                     <RibbonGroup Header="{DynamicResource text_group_excel_title}">
                         <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal" Margin="0,-3,0,0">
-                                <Label Content="员工："/>
-                                <RibbonComboBox x:Name="rcb_staff">
-                                    <RibbonGallery>
-                                        <RibbonGalleryCategory ItemsSource="{Binding StaffList,
-                                    RelativeSource={RelativeSource AncestorLevel=1,
-                                    AncestorType=RibbonWindow}}"/>
-                                    </RibbonGallery>
-                                </RibbonComboBox>
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Orientation="Vertical">
                             <RibbonButton x:Name="rb_copy" Label="复制详情" LargeImageSource="../Resources/Images/clipboard_details.ico" Click="rb_copy_Click"/>
                         </StackPanel>
                     </RibbonGroup>
                     <RibbonGroup x:Name="rg_quick" Header="快捷">
                         <RibbonSplitButton x:Name="rsb_emailTemplets" Label="邮件模板" LargeImageSource="../Resources/Images/web_email.ico"/>
-                        <RibbonSplitButton x:Name="rsb_emailReply" Label="预订确认" LargeImageSource="../Resources/Images/res_confirm.ico">
-                            <RibbonButton Label="复制邮箱地址 F1" KeyTip="A" Tag="0" Click="EmailReplyRibbonMenuItems_Clicked"/>
-                            <RibbonButton Label="复制邮件主题 F2" KeyTip="T" Tag="1" Click="EmailReplyRibbonMenuItems_Clicked"/>
-                            <RibbonButton Label="复制邮件正文 F3" KeyTip="M" Tag="2" Click="EmailReplyRibbonMenuItems_Clicked"/>
-                        </RibbonSplitButton>
                         <RibbonButton Label="获取HW订单" Click="GetHWRes"/>
                         <RibbonButton Label="查找订单 Ctrl+F" Click="FindRes"/>
                     </RibbonGroup>

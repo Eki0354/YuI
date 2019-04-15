@@ -199,6 +199,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IOExtension\IOExtension.csproj">
+      <Project>{c4ac35b5-3ccf-4f52-99ca-190a14fc24b9}</Project>
+      <Name>IOExtension</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MementoConnection\MementoConnection.csproj">
       <Project>{50e673fa-efd7-46ca-8841-077930915b43}</Project>
       <Name>MementoConnection</Name>

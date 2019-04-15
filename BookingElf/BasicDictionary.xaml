@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:BookingElf">
+    <Style x:Key="StateLabelStyle" TargetType="{x:Type local:StateLable}">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="#FF58C54A"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Content" Value="新订"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Label}">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="3"
+                            SnapsToDevicePixels="true">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding State}" Value="Changed">
+                            <Setter Property="Background" Value="#FFF7BA72"/>
+                            <Setter Property="Content" Value="修改"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="Cancelled">
+                            <Setter Property="Background" Value="#FFA2B1C8"/>
+                            <Setter Property="Content" Value="取消"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="Invalid">
+                            <Setter Property="Background" Value="#FFA2B1C8"/>
+                            <Setter Property="Content" Value="无效"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

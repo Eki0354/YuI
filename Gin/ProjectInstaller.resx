@@ -117,34 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ELiteResItemString" xml:space="preserve">
-    <value>id,State,IsChecked,ResNumber,uid,Source,Channel,ChannelLanguage,Deposit,Subtotal,Balance,Commission,BookedDateTime,ArrivalDate,DepartureDate,ArrivalTime,Persons,Nights,Rooms,Comments,Status,LastChangedDateTime,RecordedDateTime,lid,CancelledDateTime</value>
-  </data>
-  <data name="ELiteResRoomItemString" xml:space="preserve">
-    <value>id,RID,ResNumber,uid,Type,ReservedDate,ArrivalDate,DepartureDate,Price,Persons,Rooms,Nights,Status</value>
-  </data>
-  <data name="ELiteRoomItemString" xml:space="preserve">
-    <value>id,RID,Type,Floor,Building,HasTV,HasBathroom,HasToilet,IsDorm,Owner</value>
-  </data>
-  <data name="ELiteUserItemString" xml:space="preserve">
-    <value>id,uid,FullName,SurName,MiddleName,GivenName,Country,Email,Phone,Identity,PreferredLanguage,Address</value>
-  </data>
-  <data name="StringCreateLogTableStaff" xml:space="preserve">
-    <value>CREATE TABLE [log_staff](
-  [id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 
-  [sid] INT NOT NULL, 
-  [RecordedDateTime] DATETIME NOT NULL DEFAULT (DATETIME ('now', 'localtime')))</value>
-  </data>
-  <data name="TableName_Res" xml:space="preserve">
-    <value>info_res</value>
-  </data>
-  <data name="TableName_ResRoom" xml:space="preserve">
-    <value>info_res_rooms</value>
-  </data>
-  <data name="TableName_Room" xml:space="preserve">
-    <value>info_room</value>
-  </data>
-  <data name="TableName_User" xml:space="preserve">
-    <value>info_user</value>
-  </data>
+  <metadata name="GinProcessInstaller.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 64</value>
+  </metadata>
+  <metadata name="GinInstaller.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>282, 24</value>
+  </metadata>
+  <metadata name="$this.TrayLargeIcon" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
 </root>

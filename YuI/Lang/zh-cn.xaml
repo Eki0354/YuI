@@ -85,6 +85,6 @@
   <sys:String x:Key="tips_checkbox_cw_auto_email">确认订单后自动发送确认邮件(需打开“自动接单”，仅含有邮件地址信息的新订单适用，且不适用于大陆地区客人)</sys:String>
   <sys:String x:Key="tips_checkbox_cw_auto_states">自动判断剩余房量并更改本网站剩余房量(使用本功能请随时注意更改最大房量！)</sys:String>
   <!--MainWindow-->
-  <sys:String x:Key="l_month">月份：</sys:String>
-  <!--Page-Room-->
+    <sys:String x:Key="l_month">月份：</sys:String>
+    <!--Page-Room-->
 </ResourceDictionary>

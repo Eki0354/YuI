@@ -10,7 +10,9 @@
       d:DesignHeight="680" d:DesignWidth="1392"
       Title="Page_Reservation" Background="White"
       Initialized="Page_Initialized" Loaded="Page_Loaded">
-
+    <Page.Resources>
+        <ResourceDictionary Source="../PageResDictionary.xaml"/>
+    </Page.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Left" Margin="5,0,0,0">
             <Grid.RowDefinitions>
@@ -18,51 +20,79 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0"
-                       FontSize="30"
-                       Text="订单列表："/>
+                       FontSize="20"
+                       Text="订单列表："
+                       Foreground="#FF5D1325"/>
             <elf:BubbleBookingListBox Grid.Row="1"
-                                 x:Name="rlv_res"
-                                 Width="200"/>
+                                 x:Name="rlv_res"/>
         </Grid>
-        <Grid DockPanel.Dock="Right" Width="200">
+        <ListView x:Name="lvRes"
+                  DockPanel.Dock="Right"
+                  Visibility="Collapsed"
+                  ItemContainerStyle="{DynamicResource ResInfoListViewItemStyle}"/>
+        <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
-                <RowDefinition Height="52"/>
-                <RowDefinition Height="0.4*"/>
-                <RowDefinition Height="0.6*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Content="提示信息：" BorderBrush="Black" BorderThickness="0.5" FontSize="30"/>
-            <TextBox Grid.Row="1" Name="tb_order_error" FontSize="15" IsReadOnly="True" TextWrapping="Wrap"/>
-            <TextBox Grid.Row="2" Name="tb_order_content" FontSize="15" IsReadOnly="True" TextWrapping="Wrap"/>
-        </Grid>
-        <DockPanel>
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
-                <Label Content="订单信息：" FontSize="30" BorderBrush="Black" BorderThickness="1"/>
-                <DockPanel Height="150">
-                    <Label FontSize="20" Content="姓名：&#13;&#13;单号：&#13;&#13;邮箱："/>
-                    <TextBox x:Name="tb_mainInfo" FontSize="20" IsReadOnly="True" TextWrapping="WrapWithOverflow" DockPanel.Dock="Right"/>
-                    <!--TextBox x:Name="tb_resDetails" FontSize="15" DockPanel.Dock="Right" BorderBrush="Black" BorderThickness="0.5"/-->
-                </DockPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0"
+                        Grid.Column="0"
+                        Orientation="Horizontal">
+                <TextBlock Text="已登录账号："
+                               FontSize="16"
+                               Foreground="#FF13255D"/>
+                <TextBlock Text="{Binding Path=MementoAPTX.Nickname,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=local:Page_Reservation}}"
+                               VerticalAlignment="Center"/>
             </StackPanel>
-            <DockPanel DockPanel.Dock="Bottom">
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                    <Label Content="房间信息："
-                       FontSize="30"
+            <Grid Grid.Row="1"
+                  Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="房型："
+                           Grid.Column="0"
+                       FontSize="20"
                        BorderBrush="Black"
                        BorderThickness="1"/>
-                </StackPanel>
-                <ListBox x:Name="lb_resRooms"
-                         FontSize="16"
-                         Foreground="#FF045D12"
-                         Width="160"
-                         DockPanel.Dock="Left"
-                         SelectionChanged="lb_resRooms_SelectionChanged"/>
-                <DataGrid x:Name="dg_order_room" DockPanel.Dock="Right" Background="White"
+                <ComboBox x:Name="lb_resRooms"
+                              Grid.Column="1"
+                              MinWidth="132"
+                              FontSize="20"
+                              Foreground="#FF045D12"
+                              SelectionChanged="lb_resRooms_SelectionChanged" />
+            </Grid>
+            <StackPanel x:Name="panelEmailCopyButtons"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Visibility="Collapsed"
+                        Grid.Column="1"
+                        Grid.RowSpan="2">
+                <Button Content="地址 F1"
+                        Margin="0,0,15,0"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        Click="EmailAddressCopyButton_Click"/>
+                <Button Content="主题 F2"
+                        Margin="0,0,15,0"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        Click="EmailThemeCopyButton_Click"/>
+                <Button Content="正文 F3"
+                        Margin="0,0,30,0"
+                        FontSize="20"
+                        VerticalAlignment="Center"
+                        Click="EmailBodyCopyButton_Click"/>
+            </StackPanel>
+        </Grid>
+        <DataGrid x:Name="dg_order_room" DockPanel.Dock="Right" Background="White"
                           CanUserReorderColumns="False" CanUserResizeColumns="False"
                           CanUserResizeRows="False" CanUserSortColumns="False"
                           CanUserAddRows="False" FontSize="18">
-
-                </DataGrid>
-            </DockPanel>
-        </DockPanel>
+        </DataGrid>
     </DockPanel>
 </Page>

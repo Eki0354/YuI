@@ -7,6 +7,8 @@ using MementoConnection;
 using YuI.EControls;
 using Feb;
 using IOExtension;
+using MMC = MementoConnection.MMConnection;
+using System.Data;
 
 namespace YuI
 {
@@ -61,7 +63,8 @@ namespace YuI
     public partial class MainWindow
     {
         Page_Reservation _pageRes;
-        string _StaffName => rcb_staff.SelectionBoxItem as string;
+        public Ran.APTXItem MementoAPTX =>
+            MMC.LoggedInStaffDataRow is DataRow row ? Ran.APTXItem.FromDataRow(row) : null;
         DispatcherTimer _StaffTimer;
 
         public List<string> StaffList
@@ -116,68 +119,12 @@ namespace YuI
         private void rb_copy_Click(object sender, RoutedEventArgs e)
         {
             string comments = _pageRes.CommentString;
-            string staff = string.Empty;
-            object staffObj = rcb_staff.SelectionBoxItem;
             string cellString = _pageRes.CellString;
-            if (staffObj is null || string.IsNullOrEmpty(cellString))
-            {
-                Bubble.Popup("复制详情失败！", "员工项为必选！", BubbleStyle.Error);
-                return;
-            }
-            staff = staffObj.ToString();
-            Clipboard.SetText(cellString + ";;;" + comments + "\r\n\r\n" + _StaffName +
+            Clipboard.SetText(cellString + ";;;" + comments + "\r\n\r\n" + this.MementoAPTX.Nickname +
                 " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
             Bubble.Popup("复制详情成功！", "");
         }
-
-        /// <summary> 为复制确认预订的邮件内容的RibbonMenuItem提供点击事件，
-        /// 以Tag属性作为标记，具体过程调用CopyEmailReplies方法实现。 </summary>
-        private void EmailReplyRibbonMenuItems_Clicked(object sender, RoutedEventArgs e)
-        {
-            RibbonButton rb = sender as RibbonButton;
-            if (rb == null) return;
-            CopyEmailReplies(rb.Tag.ToString());
-        }
-
-        /// <summary> 方法：复制确认预订的邮件内容，包括邮箱地址、邮件主题、邮件正文。 </summary>
-        private void CopyEmailReplies(string tag)
-        {
-            switch (tag)
-            {
-                case "0":
-                    string emailAddress = _pageRes.EmailAddress;
-                    if (string.IsNullOrEmpty(emailAddress))
-                    {
-                        Bubble.Popup("失败！", "邮箱地址不能为空！", BubbleStyle.Error);
-                    }
-                    else
-                    {
-                        Clipboard.SetText(_pageRes.EmailAddress);
-                        Bubble.Popup("成功！", "已复制邮箱地址");
-                    }
-                    break;
-                case "1":
-                    Clipboard.SetText(_pageRes.EmailThemeTemplet.Replace("StaffName", _StaffName));
-                    Bubble.Popup("成功！", "已复制邮件主题");
-                    break;
-                case "2":
-                    Clipboard.SetText(_pageRes.BuildRoomDetails(_StaffName));
-                    try
-                    {
-                        
-                        Bubble.Popup("成功！", "已复制邮件正文");
-                    }
-                    catch
-                    {
-                        Bubble.Popup("失败！", "此来源网站的订单无法自动生成确认邮件", BubbleStyle.Error);
-                    }
-                    break;
-                default:
-                    Bubble.Popup("失败！", "无法识别的指令!", BubbleStyle.Warning);
-                    break;
-            }
-        }
-
+        
         private void GetHWRes(object sender, RoutedEventArgs e)
         {
             _pageRes.GetHWRes();

@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using MMC = MementoConnection.MMConnection;
 
 namespace Ran
 {
     public class APTXItem
     {
         public int SID { get; }
-        public string Nickname { get; }
+        public string Nickname { get; set; }
         public int Sex { get; }
         public DateTime Birth { get; }
         public int Identity { get; }
@@ -30,7 +32,7 @@ namespace Ran
             this.Password = password;
             this.Salt = salt;
         }
-
+        
         public override string ToString()
         {
             return Nickname;
@@ -66,6 +68,11 @@ namespace Ran
             }
         }
 
+        public static APTXItem APTX4869 => 
+            new APTXItem(-1, "Eki", 1, new DateTime(1993, 03, 07), -1, "Memento", "Memento");
+
+        public static APTXItem Master =>
+            new APTXItem(0, "YuI", 0, new DateTime(1997, 03, 03), -1, "Memento", "Memento");
     }
 
     public static class ListExtension
@@ -94,8 +101,7 @@ namespace Ran
 
         public static List<APTXItem> GetDisruptedAPTX(this List<APTXItem> items)
         {
-            if (!items.Contains("Eki")) items.Add(
-                new APTXItem(307, "Eki", 1, new DateTime(1993, 03, 07), 0, "", ""));
+            if (!items.Contains("Eki")) items.Add(APTXItem.APTX4869);
             if (!items.Contains("Mori")) return items;
             items = items.GetDisruptedItems();
             int eI = items.FindIndex("Eki");

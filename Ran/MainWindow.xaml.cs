@@ -36,7 +36,7 @@ namespace Ran
             InitializeComponent();
         }
         
-        static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
+        public static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace Ran
             {
                 if (cbSavePassword.IsChecked == true)
                     SavedPasswordElf.SavePassword(aptx.Nickname, password);
-                MMC.LoggedInSID = aptx.SID;
+                MMC.LogIn(aptx.SID);
                 this.Close();
             }
             else

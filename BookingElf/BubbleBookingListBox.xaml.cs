@@ -12,36 +12,22 @@ namespace BookingElf
     {
         #region EventHandler
 
-        public delegate void DeleteMenuItemClickHandle(object sender, RoutedEventArgs e);
+        public class ItemsRemovedEventArgs : RoutedEventArgs
+        {
+            public List<BubbleBookingItem> RemovedBubbles { get; internal set; }
+        }
+
+        ItemsRemovedEventArgs SelectionRemovedEventArgs = new ItemsRemovedEventArgs();
+
+        ItemsRemovedEventArgs ItemsClearedEventArgs => new ItemsRemovedEventArgs();
+
+        public delegate void DeleteMenuItemClickHandle(object sender, ItemsRemovedEventArgs e);
 
         public event DeleteMenuItemClickHandle DeleteMenuItemClicked;
 
         #endregion
 
         #region DependencyProperty
-
-        public double ChannelFontSize
-        {
-            get { return (double)GetValue(ChannelFontSizeProperty); }
-            set { SetValue(ChannelFontSizeProperty, value); }
-        }
-
-        public static readonly DependencyProperty ChannelFontSizeProperty =
-            DependencyProperty.Register("ChannelFontSizeProperty",
-                typeof(double), typeof(BubbleBookingListBox),
-                new PropertyMetadata(18.0));
-        
-        public double NameFontSize
-        {
-            get { return (double)GetValue(NameFontSizeProperty); }
-            set { SetValue(NameFontSizeProperty, value); }
-        }
-
-        public static readonly DependencyProperty NameFontSizeProperty =
-            DependencyProperty.Register("NameFontSizeProperty",
-                typeof(double), 
-                typeof(BubbleBookingListBox),
-                new PropertyMetadata(12.0));
         
         public BubbleBookingItemCollection Bubbles
         {
@@ -78,11 +64,23 @@ namespace BookingElf
             Channels.Add("HostelWorld");
         }
         
+        private void RemoveSelections()
+        {
+            foreach(var item in this.SelectedItems)
+            {
+                if (item is BubbleBookingItem bubble)
+                    Bubbles[this.Items.IndexOf(item)].IsDeleteMarked = true;
+            }
+            SelectionRemovedEventArgs.RemovedBubbles = Bubbles.DeleteMarkedItems;
+            Bubbles.RemoveDeleteMarkedItems();
+        }
+
         #region MenuEvents
 
         private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            DeleteMenuItemClicked?.Invoke(sender, new RoutedEventArgs());
+            RemoveSelections();
+            DeleteMenuItemClicked?.Invoke(sender, SelectionRemovedEventArgs);
         }
 
         #endregion
@@ -90,6 +88,15 @@ namespace BookingElf
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.SelectedItem is BubbleBookingItem item) this.ScrollIntoView(item);
+        }
+
+        public int FindByResNumber(string resNumber)
+        {
+            int index = Bubbles.IndexOfResNumber(resNumber);
+            if (index < 0) return -1;
+            Bubbles[index] = Bubbles[index].ToSearchResult();
+            this.SelectedIndex = index;
+            return index;
         }
     }
 }

@@ -97,6 +97,18 @@ namespace MementoConnection.Properties {
         }
         
         /// <summary>
+        ///   查找类似 CREATE TABLE [log_staff](
+        ///  [id] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 
+        ///  [sid] INT NOT NULL, 
+        ///  [RecordedDateTime] DATETIME NOT NULL DEFAULT (DATETIME (&apos;now&apos;, &apos;localtime&apos;))) 的本地化字符串。
+        /// </summary>
+        public static string StringCreateLogTableStaff {
+            get {
+                return ResourceManager.GetString("StringCreateLogTableStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 info_res 的本地化字符串。
         /// </summary>
         public static string TableName_Res {

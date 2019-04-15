@@ -17,6 +17,7 @@ using System.Windows;
 using BookingElf;
 using Feb;
 using IOExtension;
+using Ran;
 
 namespace YuI
 {
@@ -24,13 +25,22 @@ namespace YuI
     {
         #region PROPERTY
         
+        public APTXItem MementoAPTX
+        {
+            get { return (APTXItem)GetValue(MementoAPTXProperty); }
+            set { SetValue(MementoAPTXProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for MementoAPTX.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MementoAPTXProperty =
+            DependencyProperty.Register("MementoAPTX", typeof(APTXItem), typeof(Page_Reservation), new PropertyMetadata(APTXItem.Master));
+        
         BubbleBookingItemCollection _Bubbles;
         ConceivingBookingItem _AliveBubble;
         EXmlReader _XmlReader;
         FileSystemWatcher _HtmlFileSystemWatcher;
-        DispatcherTimer _ErrorDispatchTimer;
         Queue<string> _ErrorQueue = new Queue<string>();
-        public string CommentString => tb_order_content.Text;
+        public string CommentString { get; private set; }
         public string CellString
         {
             get
@@ -55,12 +65,11 @@ namespace YuI
         {
             get
             {
-                string content = tb_order_content.Text;
-                if (string.IsNullOrEmpty(content)) return string.Empty;
-                int startIndex = content.IndexOf("Email");
+                if (string.IsNullOrEmpty(CommentString)) return string.Empty;
+                int startIndex = CommentString.IndexOf("Email");
                 if (startIndex < 0) return string.Empty;
-                int endIndex = content.IndexOf("\r\n", startIndex);
-                return content.Substring(startIndex + 7, endIndex - startIndex - 7);
+                int endIndex = CommentString.IndexOf("\r\n", startIndex);
+                return CommentString.Substring(startIndex + 7, endIndex - startIndex - 7);
             }
         }
         public BubbleBookingItem ActiveResItem => rlv_res.SelectedItem as BubbleBookingItem;
@@ -92,7 +101,7 @@ namespace YuI
         private void Page_Initialized(object sender, EventArgs e)
         {
             rlv_res.SelectionChanged += lb_order_SelectionChanged;
-            rlv_res.DeleteMenuItemClicked += _DeleteMenuItem_Click;
+            rlv_res.DeleteMenuItemClicked += MenuDeleteBooking_Click;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -126,12 +135,6 @@ namespace YuI
                 EnableRaisingEvents = true
             };
             _HtmlFileSystemWatcher.Changed += _HtmlFileSystemWatcher_Changed;
-            _ErrorDispatchTimer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromMilliseconds(1000)
-            };
-            _ErrorDispatchTimer.Tick += PopupError;
-            _ErrorDispatchTimer.Start();
         }
 
         public void _HtmlFileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -157,12 +160,9 @@ namespace YuI
             }
         }
 
-        private void PopupError(object sender, EventArgs e)
+        public void MenuDeleteBooking_Click(object sender, BubbleBookingListBox.ItemsRemovedEventArgs e)
         {
-            while (_ErrorQueue.Count > 0)
-            {
-                tb_order_error.AppendText(_ErrorQueue.Dequeue() + "\r\n");
-            }
+            e.RemovedBubbles.ForEach(item => MMC.DeleteResByResNumber(item.ResNumber));
         }
 
         #endregion
@@ -449,12 +449,10 @@ namespace YuI
         
         private void ResetRes()
         {
-            tb_mainInfo.Text = string.Empty;
             //l_resDetails.Content = null;
             lb_resRooms.Items.Clear();
             dg_order_room.ItemsSource = null;
-            tb_order_error.Text = string.Empty;
-            tb_order_content.Text = string.Empty;
+            CommentString = string.Empty;
         }
 
         #endregion
@@ -480,8 +478,8 @@ namespace YuI
         public void SetEmailTempletText(object sender, RoutedEventArgs e)
         {
             RibbonButton mi = sender as RibbonButton;
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\HROS\\EmailTemplates\\";
-            path += mi.Label + ".txt";
+            string path = string.Format(@"{0}\{1}.txt", 
+                MementoPath.EmailTemplatesDirectory, mi.Label);
             FileStream fs = new FileStream(path, FileMode.Open);
             Clipboard.SetText(new StreamReader(fs).ReadToEnd());
             fs.Close();
@@ -510,8 +508,8 @@ namespace YuI
         private void lb_order_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             BubbleBookingItem res = rlv_res.SelectedItem as BubbleBookingItem;
-            if (res == null) return;
             ResetRes();
+            if (res == null) return;
             #region DATAGRID
 
             lb_resRooms.Items.Add("全部");
@@ -531,25 +529,26 @@ namespace YuI
             }
 
             #endregion
-            #region MAININFO
-
-            sqlString = "SELECT " + _XmlReader.ReadValue("Main/ShowKeywords") +
-                " FROM info_res,info_user WHERE ResNumber='" + res.ResNumber + "' and info_res.uid=info_user.uid";
-            DataTable dst = MMC.Select(sqlString);
-            if (dst is null || dst.Rows.Count < 1) return;
-            string tmp = "";
-            foreach (string title in new string[] { "FullName",
-                    "ResNumber", "Email" })
-            {
-                tmp += "\r\n\r\n";
-                if (dst.Columns.Contains(title))
-                    tmp += dst.Rows[0][title].ToString();
-            }
-            tb_mainInfo.Text = tmp.Substring(4);
-
-            #endregion
             #region COMMENT
 
+            sqlString = "SELECT * FROM info_res,info_user WHERE ResNumber='" + res.ResNumber + "' and info_res.uid=info_user.uid";
+            DataTable dst = MMC.Select(sqlString);
+            if (dst is null || dst.Rows.Count < 1) return;
+            Dictionary<string, object> infos = new Dictionary<string, object>();
+            for (int i = 0; i < dst.Columns.Count - 1; i++)
+            {
+                infos.Add(dst.Columns[i].Caption, dst.Rows[0][i]);
+            }
+            lvRes.ItemsSource = infos;
+            panelEmailCopyButtons.Visibility = infos["Email"] is string email &&
+                email.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+            sqlString = string.Format("SELECT {0} FROM info_res,info_user WHERE " +
+                "ResNumber='{1}' and info_res.uid=info_user.uid",
+                _XmlReader.ReadValue("Main/ShowKeywords"), res.ResNumber);
+            dst = MMC.Select(sqlString);
+            if (dst is null || dst.Rows.Count < 1) return;
+            string[] infonames = _XmlReader.ReadValue("Main/EndorseKeywords-" +
+                _XmlReader.ReadValue("Main/EndorseLanguage")).Split(',');
             string[] disnames = _XmlReader.ReadValue("Main/EndorseKeywords-" +
                 _XmlReader.ReadValue("Main/EndorseLanguage")).Split(',');
             string contentString = string.Empty;
@@ -564,7 +563,7 @@ namespace YuI
                     contentString += "\r\n" + disnames[i] + ": " + itemStr;
                 }
             }
-            tb_order_content.Text = contentString.Substring(2);
+            CommentString = contentString.Substring(2);
 
             #endregion
         }
@@ -603,20 +602,7 @@ namespace YuI
                     gridDT.Rows.Add(newRow);
                 }
                 dg_order_room.ItemsSource = gridDT.DefaultView;
-                dg_order_room.Columns[1].MaxWidth = 290;
             }
-        }
-
-        private void _DeleteMenuItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Console.WriteLine(rlv_res.SelectedIndex);
-        }
-
-        private void _DeleteMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            BubbleBookingItem item = rlv_res.SelectedItem as BubbleBookingItem;
-            if (item is null) return;
-            MMC.DeleteResByResNumber(item.ResNumber);
         }
 
         #endregion
@@ -675,24 +661,19 @@ namespace YuI
                 MMC.FindResByResNumberOrFullName(keyword), true);
             Dispatcher.Invoke(new Action(() =>
             {
-                int validIndex = -1;
+                int index = -1;
                 foreach (BubbleBookingItem item in items)
                 {
-                    int index = _Bubbles.IndexOfResNumber(item.ResNumber);
-                    if (index > -1)
-                    {
-                        _Bubbles[index].IsSearchResult = true;
-                        validIndex = index;
-                    }
-                    else
+                    index = rlv_res.FindByResNumber(item.ResNumber);
+                    if (index < 0)
                     {
                         _Bubbles.AddToFirst(item);
-                        validIndex = 0;
+                        index = 0;
                     }
                 }
                 if (items.Count > 0)
                 {
-                    rlv_res.SelectedIndex = validIndex;
+                    if (index > -1) rlv_res.SelectedIndex = index;
                     Bubble.Popup("成功！", string.Format(
                         "已找到关键字为[{0}]的历史订单！", keyword));
                 }
@@ -703,6 +684,49 @@ namespace YuI
                 }
             }));
         }
-        
+
+        #region EmailReply
+
+        public void EmailAddressCopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(this.EmailAddress);
+                Bubble.Popup("成功！", "已复制邮箱地址");
+            }
+            catch
+            {
+                Bubble.Popup("失败！", "邮箱地址不能为空！", BubbleStyle.Error);
+            }
+        }
+
+        public void EmailThemeCopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(this.EmailThemeTemplet.Replace("StaffName", this.MementoAPTX.Nickname));
+                Bubble.Popup("成功！", "已复制邮件主题");
+            }
+            catch
+            {
+                Bubble.Popup("失败！", "剪贴板出错！请再次尝试！", BubbleStyle.Error);
+            }
+        }
+
+        public void EmailBodyCopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(this.BuildRoomDetails(this.MementoAPTX.Nickname));
+                Bubble.Popup("成功！", "已复制邮件正文");
+            }
+            catch
+            {
+                Bubble.Popup("失败！", "此来源网站的订单无法自动生成确认邮件", BubbleStyle.Error);
+            }
+        }
+
+        #endregion
+
     }
 }
