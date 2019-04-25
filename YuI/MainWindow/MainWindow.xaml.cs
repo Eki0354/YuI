@@ -111,6 +111,19 @@ namespace YuI
                 {
                     _pageRes.FindRes();
                 }
+                if(e.KeyboardDevice.IsKeyDown(Key.RightCtrl) && 
+                    e.KeyboardDevice.IsKeyDown(Key.D))
+                {
+                    RibbonButtonShowResDetails_Click(null, null);
+                }
+                if((e.KeyboardDevice.IsKeyDown(Key.RightCtrl) || 
+                    e.KeyboardDevice.IsKeyDown(Key.LeftCtrl)) &&
+                    (e.KeyboardDevice.IsKeyDown(Key.LeftShift) ||
+                    e.KeyboardDevice.IsKeyDown(Key.RightShift))&&
+                    e.KeyboardDevice.IsKeyDown(Key.S))
+                {
+                    _pageRes.EmailSendButton_Click(null, null);
+                }
             }
         }
 
@@ -126,6 +139,11 @@ namespace YuI
         private void MenuSwitchStaff_Click(object sender, RoutedEventArgs e)
         {
             SummonRan();
+        }
+
+        private void RibbonButtonShowResDetails_Click(object sender, RoutedEventArgs e)
+        {
+            _pageRes.lvRes.Visibility = Visibility.Visible;
         }
     }
 }

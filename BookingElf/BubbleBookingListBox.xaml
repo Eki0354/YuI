@@ -11,9 +11,9 @@
          MinHeight="66"
          MinWidth="264"
          SelectionChanged="ListBox_SelectionChanged"
-         ItemsSource="{Binding Bubbles, RelativeSource={RelativeSource Self}}"
+         ItemsSource="{Binding Bubbles, Mode=TwoWay, RelativeSource={RelativeSource Self}}"
          Style="{DynamicResource BubbleBookingListBoxStyle}"
-         ItemContainerStyle="{DynamicResource BubbleBookingListBoxItemStyle}">
+         ItemContainerStyle="{DynamicResource BubbleBookingListBoxItemStyle}" SourceUpdated="ListBox_SourceUpdated" DataContextChanged="ListBox_DataContextChanged">
     <ListBox.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -171,32 +171,41 @@
                                         <CheckBox Content="搜索结果"
                                               VerticalAlignment="Center"/>
                                     </WrapPanel>
-                                    <Separator Grid.Row="1"/>
                                     <ScrollViewer Grid.Row="2"
                                               Focusable="false"
                                               Padding="{TemplateBinding Padding}">
                                         <ScrollViewer.ContextMenu>
                                             <ContextMenu>
                                                 <MenuItem x:Name="mi_hideS"
-                                                      Header="隐藏选中"/>
+                                                          Header="隐藏选中"
+                                                          Click="MenuHideSelections_Click"/>
                                                 <Separator/>
                                                 <MenuItem x:Name="mi_hideL"
-                                                      Header="隐藏列表"/>
+                                                          Header="隐藏列表"
+                                                          Click="MenuHideAllItems_Click"/>
                                                 <Separator/>
                                                 <MenuItem x:Name="mi_markS"
-                                                      Header="标记选中">
-                                                    <MenuItem Header="正常"/>
-                                                    <MenuItem Header="更改"/>
-                                                    <MenuItem Header="取消"/>
-                                                    <MenuItem Header="无效"/>
+                                                          Header="标记选中">
+                                                    <MenuItem Header="新订"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="修改"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="取消"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="无效"
+                                                              Click="MenuMarkSelections_Click"/>
                                                 </MenuItem>
                                                 <Separator/>
                                                 <MenuItem x:Name="mi_markL"
                                                       Header="标记列表">
-                                                    <MenuItem Header="正常"/>
-                                                    <MenuItem Header="更改"/>
-                                                    <MenuItem Header="取消"/>
-                                                    <MenuItem Header="无效"/>
+                                                    <MenuItem Header="新订"
+                                                              Click="MenuMarkAllItems_Click"/>
+                                                    <MenuItem Header="修改"
+                                                              Click="MenuMarkAllItems_Click"/>
+                                                    <MenuItem Header="取消"
+                                                              Click="MenuMarkAllItems_Click"/>
+                                                    <MenuItem Header="无效"
+                                                              Click="MenuMarkAllItems_Click"/>
                                                 </MenuItem>
                                                 <MenuItem Header="删除选中"
                                                       Click="DeleteMenuItem_Click"/>

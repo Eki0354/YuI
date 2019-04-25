@@ -18,6 +18,7 @@ using BookingElf;
 using Feb;
 using IOExtension;
 using Ran;
+using System.Threading.Tasks;
 
 namespace YuI
 {
@@ -50,7 +51,7 @@ namespace YuI
                 return _XmlReader.ReadValue(res.Channel + "/AbTitle") + "\r\n" + res.FullName;
             }
         }
-        public string EmailThemeTemplet
+        public string EmailTheme
         {
             get
             {
@@ -58,7 +59,7 @@ namespace YuI
                 if (rlv_res.SelectedItem == null ||
                     (rlv_res.SelectedItem as BubbleBookingItem).Channel != "TrafficYouth") return theme;
                 theme = _XmlReader.ReadValue("Email/EmailTheme-TrafficYouth");
-                return theme;
+                return theme.Replace("StaffName", this.MementoAPTX.Nickname);
             }
         }
         public string EmailAddress
@@ -102,6 +103,10 @@ namespace YuI
         {
             rlv_res.SelectionChanged += lb_order_SelectionChanged;
             rlv_res.DeleteMenuItemClicked += MenuDeleteBooking_Click;
+            rlv_res.HideSelectionsMenuItemClicked += MenuHideBooking_Click;
+            rlv_res.HideAllItemsMenuItemClicked += MenuHideBooking_Click;
+            rlv_res.MarkSelectionsMenuItemClicked += MenuMarkBooking_Click;
+            rlv_res.MarkAllItemsMenuItemClicked += MenuMarkBooking_Click;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -134,6 +139,7 @@ namespace YuI
                 Filter = "*.ht*",
                 EnableRaisingEvents = true
             };
+            _HtmlFileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
             _HtmlFileSystemWatcher.Changed += _HtmlFileSystemWatcher_Changed;
         }
 
@@ -160,9 +166,34 @@ namespace YuI
             }
         }
 
-        public void MenuDeleteBooking_Click(object sender, BubbleBookingListBox.ItemsRemovedEventArgs e)
+        private void MenuDeleteBooking_Click(object sender, BubbleBookingListBox.BubblesChangedEventArgs e)
         {
-            e.RemovedBubbles.ForEach(item => MMC.DeleteResByResNumber(item.ResNumber));
+            e.ChangedBubbles.ForEach(item => MMC.DeleteResByResNumber(item.ResNumber));
+        }
+
+        private void MenuHideBooking_Click(object sender, BubbleBookingListBox.BubblesChangedEventArgs e)
+        {
+            MMCBat(new Action(() => e.ChangedBubbles.ForEach(
+                item => MMC.UpdateResChecked(item.ResNumber))));
+        }
+
+        private void MenuMarkBooking_Click(object sender, BubbleBookingListBox.BubblesChangedEventArgs e)
+        {
+            MMCBat(new Action(() => e.ChangedBubbles.ForEach(
+                item => MMC.UpdateResState(item.ResNumber, (int)item.State))));
+        }
+
+        private void MMCBat(Action operation)
+        {
+            Action action = new Action(() => MMC.Bat(operation));
+            action.BeginInvoke((result) =>
+            {
+                action.EndInvoke(result);
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    Bubble.Popup("呼噜", "数据库同步完成！");
+                }));
+            }, null);
         }
 
         #endregion
@@ -445,18 +476,6 @@ namespace YuI
 
         #endregion
         
-        #region Res
-        
-        private void ResetRes()
-        {
-            //l_resDetails.Content = null;
-            lb_resRooms.Items.Clear();
-            dg_order_room.ItemsSource = null;
-            CommentString = string.Empty;
-        }
-
-        #endregion
-
         #region EmailTemplet
 
         public List<string> ReadEmailTempletList()
@@ -478,32 +497,33 @@ namespace YuI
         public void SetEmailTempletText(object sender, RoutedEventArgs e)
         {
             RibbonButton mi = sender as RibbonButton;
-            string path = string.Format(@"{0}\{1}.txt", 
-                MementoPath.EmailTemplatesDirectory, mi.Label);
-            FileStream fs = new FileStream(path, FileMode.Open);
-            Clipboard.SetText(new StreamReader(fs).ReadToEnd());
-            fs.Close();
+            Clipboard.SetText(ReadEmailTempletText(mi.Label));
             Bubble.Popup("成功！", "已复制邮件模板：" + mi.Label);
         }
 
-        #endregion
-
-        #region Staff
-
-        public List<string> StaffList
+        public string ReadEmailTempletText(string name)
         {
-            get
-            {
-                List<string> staff = new List<string>(
-                _XmlReader.ReadValue("Staff/RecStaff").Split(','));
-                staff.Sort();
-                return staff;
-            }
+            string path = string.Format(@"{0}\{1}.txt", 
+                MementoPath.EmailTemplatesDirectory, name);
+            string text;
+            FileStream fs = new FileStream(path, FileMode.Open);
+            text = new StreamReader(fs).ReadToEnd();
+            fs.Close();
+            return text;
         }
 
         #endregion
 
         #region Controls
+
+        private void ResetRes()
+        {
+            //l_resDetails.Content = null;
+            lvRes.Visibility = Visibility.Collapsed;
+            lb_resRooms.Items.Clear();
+            dg_order_room.ItemsSource = null;
+            CommentString = string.Empty;
+        }
 
         private void lb_order_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -704,7 +724,7 @@ namespace YuI
         {
             try
             {
-                Clipboard.SetText(this.EmailThemeTemplet.Replace("StaffName", this.MementoAPTX.Nickname));
+                Clipboard.SetText(this.EmailTheme);
                 Bubble.Popup("成功！", "已复制邮件主题");
             }
             catch
@@ -728,5 +748,17 @@ namespace YuI
 
         #endregion
 
+        public void EmailSendButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+                Bubble.Popup("咕咚", "开始发送邮件. . .")));
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                if (this.SendMail())
+                    Bubble.Popup("叮咚", "邮件发送成功！");
+                else
+                    Bubble.Popup("哦豁", "邮件发送失败！");
+            }));
+        }
     }
 }

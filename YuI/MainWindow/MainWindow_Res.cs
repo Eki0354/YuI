@@ -65,13 +65,6 @@ namespace YuI
         Page_Reservation _pageRes;
         public Ran.APTXItem MementoAPTX =>
             MMC.LoggedInStaffDataRow is DataRow row ? Ran.APTXItem.FromDataRow(row) : null;
-        DispatcherTimer _StaffTimer;
-
-        public List<string> StaffList
-        {
-            get { return (List<string>)GetValue(StaffListProperty); }
-            set { SetValue(StaffListProperty, value); }
-        }
 
         // Using a DependencyProperty as the backing store for StaffList.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty StaffListProperty =
@@ -86,17 +79,6 @@ namespace YuI
         private void InitializeControls_ResGroup()
         {
             InitializeEmailTemplates();
-            InitStaff(null, null);
-            _StaffTimer = new DispatcherTimer();
-            _StaffTimer.Tick += new EventHandler(InitStaff);
-            _StaffTimer.Interval = new TimeSpan(0, 5, 0);
-            _StaffTimer.Start();
-        }
-
-        /// <summary> 初始化员工列表 </summary>
-        private void InitStaff(object sender, EventArgs e)
-        {
-            StaffList = _pageRes.StaffList.GetDisruptedStaff();
         }
         
         /// <summary> 初始化邮件模板列表 </summary>

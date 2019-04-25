@@ -72,6 +72,10 @@
                         Visibility="Collapsed"
                         Grid.Column="1"
                         Grid.RowSpan="2">
+                <Button Content="发送"
+                        VerticalAlignment="Center"
+                        Visibility="Collapsed"
+                        Click="EmailSendButton_Click"/>
                 <Button Content="地址 F1"
                         Margin="0,0,15,0"
                         FontSize="20"

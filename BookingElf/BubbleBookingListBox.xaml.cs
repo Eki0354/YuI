@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,23 +13,39 @@ namespace BookingElf
     {
         #region EventHandler
 
-        public class ItemsRemovedEventArgs : RoutedEventArgs
+        public class BubblesChangedEventArgs : RoutedEventArgs
         {
-            public List<BubbleBookingItem> RemovedBubbles { get; internal set; }
+            public List<BubbleBookingItem> ChangedBubbles { get; internal set; }
         }
 
-        ItemsRemovedEventArgs SelectionRemovedEventArgs = new ItemsRemovedEventArgs();
+        BubblesChangedEventArgs SelectionsChangedEventArgs = new BubblesChangedEventArgs();
 
-        ItemsRemovedEventArgs ItemsClearedEventArgs => new ItemsRemovedEventArgs();
+        BubblesChangedEventArgs AllChangedEventArgs = new BubblesChangedEventArgs();
 
-        public delegate void DeleteMenuItemClickHandle(object sender, ItemsRemovedEventArgs e);
+        public delegate void DeleteMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
 
         public event DeleteMenuItemClickHandle DeleteMenuItemClicked;
+
+        public delegate void HideSelectionsMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
+
+        public event HideSelectionsMenuItemClickHandle HideSelectionsMenuItemClicked;
+
+        public delegate void HideAllItemsMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
+
+        public event HideAllItemsMenuItemClickHandle HideAllItemsMenuItemClicked;
+
+        public delegate void MarkSelectionsMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
+
+        public event MarkSelectionsMenuItemClickHandle MarkSelectionsMenuItemClicked;
+
+        public delegate void MarkAllItemsMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
+
+        public event MarkAllItemsMenuItemClickHandle MarkAllItemsMenuItemClicked;
 
         #endregion
 
         #region DependencyProperty
-        
+
         public BubbleBookingItemCollection Bubbles
         {
             get { return (BubbleBookingItemCollection)GetValue(BubblesProperty); }
@@ -64,15 +81,66 @@ namespace BookingElf
             Channels.Add("HostelWorld");
         }
         
+        private void ListBox_SourceUpdated(object sender, System.Windows.Data.DataTransferEventArgs e)
+        {
+            if (!(this.ItemsSource is BubbleBookingItemCollection)) this.ItemsSource = null;
+        }
+
+        private void ListBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(this.DataContext is BubbleBookingItemCollection)) this.DataContext = null;
+        }
+
         private void RemoveSelections()
         {
-            foreach(var item in this.SelectedItems)
+            GetMarkedSelections().ForEach(bubble => Bubbles.Remove(bubble));
+        }
+
+        private void ClearItems()
+        {
+            GetMarkedAllItems();
+            Bubbles.Clear();
+        }
+
+        private List<BubbleBookingItem> GetMarkedSelections()
+        {
+            List<BubbleBookingItem> bubbleList = new List<BubbleBookingItem>();
+            foreach (var item in this.SelectedItems)
             {
-                if (item is BubbleBookingItem bubble)
-                    Bubbles[this.Items.IndexOf(item)].IsDeleteMarked = true;
+                bubbleList.Add(Bubbles[this.Items.IndexOf(item)]);
             }
-            SelectionRemovedEventArgs.RemovedBubbles = Bubbles.DeleteMarkedItems;
-            Bubbles.RemoveDeleteMarkedItems();
+            SelectionsChangedEventArgs.ChangedBubbles = bubbleList;
+            return bubbleList;
+        }
+
+        private List<BubbleBookingItem> GetMarkedAllItems()
+        {
+            List<BubbleBookingItem> items = new List<BubbleBookingItem>(Bubbles);
+            AllChangedEventArgs.ChangedBubbles = items;
+            return items;
+        }
+
+        private void MarkItems(List<BubbleBookingItem> items, string header)
+        {
+            items.ForEach(item =>
+            {
+                switch (header)
+                {
+                    case "修改":
+                        item.State = BubbleBookingState.Changed;
+                        break;
+                    case "取消":
+                        item.State = BubbleBookingState.Cancelled;
+                        break;
+                    case "无效":
+                        item.State = BubbleBookingState.Invalid;
+                        break;
+                    case "正常":
+                    default:
+                        item.State = BubbleBookingState.Normal;
+                        break;
+                }
+            });
         }
 
         #region MenuEvents
@@ -80,7 +148,31 @@ namespace BookingElf
         private void DeleteMenuItem_Click(object sender, RoutedEventArgs e)
         {
             RemoveSelections();
-            DeleteMenuItemClicked?.Invoke(sender, SelectionRemovedEventArgs);
+            DeleteMenuItemClicked?.Invoke(sender, SelectionsChangedEventArgs);
+        }
+        
+        private void MenuHideSelections_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveSelections();
+            HideSelectionsMenuItemClicked?.Invoke(sender, SelectionsChangedEventArgs);
+        }
+
+        private void MenuHideAllItems_Click(object sender, RoutedEventArgs e)
+        {
+            ClearItems();
+            HideAllItemsMenuItemClicked?.Invoke(sender, AllChangedEventArgs);
+        }
+
+        private void MenuMarkSelections_Click(object sender, RoutedEventArgs e)
+        {
+            MarkItems(GetMarkedSelections(), (sender as MenuItem).Header.ToString());
+            MarkSelectionsMenuItemClicked?.Invoke(sender, SelectionsChangedEventArgs);
+        }
+
+        private void MenuMarkAllItems_Click(object sender, RoutedEventArgs e)
+        {
+            MarkItems(GetMarkedAllItems(), (sender as MenuItem).Header.ToString());
+            MarkAllItemsMenuItemClicked?.Invoke(sender, AllChangedEventArgs);
         }
 
         #endregion
@@ -98,5 +190,6 @@ namespace BookingElf
             this.SelectedIndex = index;
             return index;
         }
+
     }
 }

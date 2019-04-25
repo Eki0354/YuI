@@ -59,6 +59,13 @@ namespace MementoConnection
             File.Copy(sourceFilePath, destFilePath, true);
         }
 
+        public static void Bat(Action action)
+        {
+            SQLiteTransaction tran = Conn.BeginTransaction();
+            action();
+            tran.Commit();
+        }
+
         #endregion
 
         #region BaseOperation_Existed

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -19,23 +21,31 @@ namespace BookingElf
     #region BubbleBookingItem
 
     /// <summary> 仅用于在BubbleListBox中绑定显示的数据类型 </summary>
-    public class BubbleBookingItem
+    public class BubbleBookingItem : INotifyPropertyChanged
     {
         static int DisplayNameLength { get; } = 22;
         static int DisplayResLength { get; } = 12;
 
         public string Channel { get; }
         public string FullName { get; }
-        public string ResNumber { get; }
+        public string ResNumber { get; set; }
         public string DisplayRes => ResNumber.Length > DisplayResLength ? string.Format(
             "...{0}", ResNumber.Substring(ResNumber.Length - DisplayResLength + 3)) :
             ResNumber;
         public string DisplayName => 
             FullName.Length > DisplayNameLength ? 
             FullName.Substring(0, DisplayNameLength - 3) + "..." : FullName;
-        public BubbleBookingState State { get; set; } = BubbleBookingState.Normal;
+        private BubbleBookingState state = BubbleBookingState.Normal;
+        public BubbleBookingState State
+        {
+            get { return state; }
+            set
+            {
+                state = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("State"));
+            }
+        }
         public bool IsSearchResult { get; set; } = false;
-        public bool IsDeleteMarked { get; set; } = false;
 
         public BubbleBookingItem(string channel, string fullName, string resNumber)
         {
@@ -43,6 +53,8 @@ namespace BookingElf
             this.FullName = fullName;
             this.ResNumber = resNumber;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public static BubbleBookingItem FromDataRow(DataRow row, bool isSearchResult = false)
         {
@@ -245,14 +257,6 @@ namespace BookingElf
         }
 
         #endregion
-
-        public List<BubbleBookingItem> DeleteMarkedItems =>
-            this.Where(item => item.IsDeleteMarked).ToList();
-
-        public void RemoveDeleteMarkedItems()
-        {
-            this.DeleteMarkedItems.ForEach(item => this.Items.Remove(item));
-        }
 
         public static BubbleBookingItemCollection FromDataTable(DataTable table, bool isSearchResult = false)
         {

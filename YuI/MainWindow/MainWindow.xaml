@@ -128,25 +128,25 @@
                         <RibbonButton x:Name="button_test" Label="测试" Click="button_test_Click"/>
                     </RibbonGroup>
                 </RibbonTab>
-                <RibbonTab x:Name="tab_order" Header="{DynamicResource text_tab_order_title}" KeyTip="O">
-                    <RibbonGroup Header="{DynamicResource text_group_normal_title}">
+                <RibbonTab x:Name="tab_order" Header="{DynamicResource text_tab_order_title}" KeyTip="O" IsSelected="True">
+                    <RibbonGroup Header="{DynamicResource text_group_normal_title}"
+                                 Visibility="Collapsed">
                         <RibbonButton x:Name="button_order_add" Label="{DynamicResource text_button_order_add}" LargeImageSource="../Resources/Images/order_add.ico"/>
                         <RibbonButton x:Name="button_order_edit" Label="{DynamicResource text_button_order_edit}" LargeImageSource="../Resources/Images/order_edit.ico"/>
                         <RibbonButton x:Name="button_order_delete" Label="{DynamicResource text_button_order_delete}" LargeImageSource="../Resources/Images/order_delete.ico"/>
                     </RibbonGroup>
-                    <RibbonGroup Header="{DynamicResource text_group_excel_title}">
-                        <StackPanel Orientation="Vertical">
-                            <RibbonButton x:Name="rb_copy" Label="复制详情" LargeImageSource="../Resources/Images/clipboard_details.ico" Click="rb_copy_Click"/>
-                        </StackPanel>
+                    <RibbonGroup x:Name="rg_config" Header="配置">
+                        <RibbonButton Label="更新配置" KeyTip="U" Click="UpdateConfig"/>
+                        <RibbonButton Label="打开配置" KeyTip="C" Click="OpenConfig"/>
                     </RibbonGroup>
                     <RibbonGroup x:Name="rg_quick" Header="快捷">
                         <RibbonSplitButton x:Name="rsb_emailTemplets" Label="邮件模板" LargeImageSource="../Resources/Images/web_email.ico"/>
                         <RibbonButton Label="获取HW订单" Click="GetHWRes"/>
                         <RibbonButton Label="查找订单 Ctrl+F" Click="FindRes"/>
                     </RibbonGroup>
-                    <RibbonGroup x:Name="rg_config" Header="配置">
-                        <RibbonButton Label="更新配置" KeyTip="U" Click="UpdateConfig"/>
-                        <RibbonButton Label="打开配置" KeyTip="C" Click="OpenConfig"/>
+                    <RibbonGroup Header="{DynamicResource text_group_excel_title}">
+                        <RibbonButton x:Name="rb_copy" Label="复制详情" LargeImageSource="../Resources/Images/clipboard_details.ico" Click="rb_copy_Click"/>
+                        <RibbonButton x:Name="rbShowResDetails" Visibility="Collapsed" Label="显示详情" LargeImageSource="../Resources/Images/res_details.ico" Click="RibbonButtonShowResDetails_Click"/>
                     </RibbonGroup>
                 </RibbonTab>
                 <RibbonTab x:Name="tab_sale" Header="{DynamicResource text_tab_sale_title}" KeyTip="S">

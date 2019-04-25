@@ -170,6 +170,16 @@ namespace MementoConnection
                 },
                 "ResNumber='" + resNumber + "'");
 
+        public static void UpdateResState(string resNumber, int state = 0)
+        {
+            ExecuteUpdate("info_res",
+                new Dictionary<string, object>()
+                {
+                    { "State",state }
+                },
+                "ResNumber='" + resNumber + "'");
+        }
+
         #endregion
 
         #region DELETE

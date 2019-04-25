@@ -29,7 +29,7 @@
                             <Setter Property="Content" Value="取消"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding State}" Value="Invalid">
-                            <Setter Property="Background" Value="#FFA2B1C8"/>
+                            <Setter Property="Background" Value="#FF950000"/>
                             <Setter Property="Content" Value="无效"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>

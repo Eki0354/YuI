@@ -8,12 +8,14 @@ using System.Text;
 using MementoConnection;
 using MMC = MementoConnection.MMConnection;
 using BookingElf;
+using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Net.Mail;
 
 namespace YuI
 {
     public partial class Page_Reservation
     {
-        public string BuildRoomDetails(string staffName)
+        public string BuildRoomDetails(string staffName, bool isHtml = false)
         {
             if (!(rlv_res.SelectedItem is BubbleBookingItem Res)) return null;
             int roomCount = 0;
@@ -50,7 +52,9 @@ namespace YuI
                 sb.Append(" at " + price + " CNY/Night" + new string[] { "", "/Person" }[Convert.ToInt32(rtIndex < 3)]);
                 IsSingleOrder = false;
             }
-            return _XmlReader.ReadValue("Email/EmailBody").Replace("RoomDetails", sb.ToString()).Replace("StaffName", staffName).Replace("CustomerName", _InitializedName(Res.FullName));
+            return ReadEmailTempletText(isHtml ? "订单确认_Html" : "订单确认").
+                Replace("RoomDetails", sb.ToString()).Replace("StaffName", staffName).
+                Replace("CustomerName", _InitializedName(Res.FullName));
         }
 
         private string _InitializedName(string name)
@@ -72,6 +76,35 @@ namespace YuI
             }
             return name.Substring(0, 1).ToUpper() + name.Substring(1).ToLower();
         }
+
+        public bool SendMail()
+        {
+            if (rlv_res.SelectedIndex < -1) return false;
+            string _sender = "mrspandahostel@hotmail.com";// "ichinoseeki@outlook.com";
+            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
+
+            client.Port = 587;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            System.Net.NetworkCredential credentials =
+                new System.Net.NetworkCredential(_sender, "Panda2018**");// "ms#425459#");
+            client.EnableSsl = true;
+            client.Credentials = credentials;
+
+            try
+            {
+                var mail = new MailMessage(_sender.Trim(), this.EmailAddress.Trim());//"911486667@qq.com");
+                mail.Subject = this.EmailTheme;
+                mail.Body = this.BuildRoomDetails(this.MementoAPTX.Nickname, true);
+                mail.IsBodyHtml = true;
+                client.Send(mail);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        } 
 
         public string GetHttpHtml(string HttpWebSite,string WebOrderNumber)
         {
