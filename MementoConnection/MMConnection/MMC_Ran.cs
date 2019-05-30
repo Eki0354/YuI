@@ -11,12 +11,6 @@ namespace MementoConnection
     {
         public static DataTable GetStaffList => Select("select * from info_staff", false);
         
-        static void InitLogTable_LogIn()
-        {
-            if (IsExistTable("log_staff")) return;
-            Execute(Properties.Resources.StringCreateLogTableStaff);
-        }
-        
         public static void LogIn(int sid)
         {
             InsertLogInLog(sid);

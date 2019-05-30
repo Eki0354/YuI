@@ -106,48 +106,5 @@ namespace YuI
             }
         } 
 
-        public string GetHttpHtml(string HttpWebSite,string WebOrderNumber)
-        {
-            HttpWebRequest httpReq = WebRequest.Create(new Uri(_XmlReader.ReadValue(HttpWebSite + "/LoginSite"))) as HttpWebRequest;
-            CookieContainer Cookies = new CookieContainer();
-            httpReq.CookieContainer = new CookieContainer();
-            httpReq.Proxy = null;
-            httpReq.Referer = _XmlReader.ReadValue(HttpWebSite + "/RefererSite");
-            httpReq.Method = "POST";
-            httpReq.Accept = "text/html, application/xhtml+xml, */*";
-            httpReq.ContentType = "application/x-www-form-urlencoded";
-            httpReq.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
-            httpReq.KeepAlive = true;
-            httpReq.AllowAutoRedirect = false;
-            httpReq.Credentials = CredentialCache.DefaultCredentials;
-            httpReq.Method = "POST";
-            byte[] PostByte = Encoding.GetEncoding("GB2312").GetBytes(_XmlReader.ReadValue(HttpWebSite + "/PostString"));
-            httpReq.ContentLength = PostByte.Length;
-            Stream PostStream = httpReq.GetRequestStream();
-            PostStream.Write(PostByte, 0, PostByte.Length);
-            PostStream.Close();
-            Cookies = httpReq.CookieContainer;
-            HttpWebResponse httpRes = (HttpWebResponse)(httpReq.GetResponse());
-            foreach (Cookie ck in httpRes.Cookies)
-            {
-                Cookies.Add(ck);
-                Console.WriteLine(ck.Name);
-            }
-            httpReq = WebRequest.Create(new Uri(_XmlReader.ReadValue(HttpWebSite + "/RevSite").Replace("OrderNumber", WebOrderNumber))) as HttpWebRequest;
-            httpReq.CookieContainer = Cookies;
-            httpReq.Method = "GET";
-            Stream stream = (httpReq.GetResponse() as HttpWebResponse).GetResponseStream();
-            StreamReader reader = new StreamReader(stream);
-            string respHTML = reader.ReadToEnd();
-            //Clipboard.SetText(respHTML);
-            reader.Close();
-            stream.Close();
-            if (httpReq != null)
-            {
-                httpReq.GetResponse().Close();
-                httpReq = null;
-            }
-            return respHTML;
-        }
     }
 }

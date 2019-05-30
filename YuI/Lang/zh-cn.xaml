@@ -8,7 +8,7 @@
                     mc:Ignorable="d" 
                     xmlns:ec="clr-namespace:YuI.EControls">
     <sys:String x:Key="text_app_title">yui</sys:String>
-  <sys:String x:Key="text_button_open">打开</sys:String>
+    <sys:String x:Key="text_button_open">打开</sys:String>
   <sys:String x:Key="text_button_save">保存</sys:String>
   <sys:String x:Key="text_button_saveas">保存为. . .</sys:String>
   <sys:String x:Key="text_button_printpanel">打印</sys:String>

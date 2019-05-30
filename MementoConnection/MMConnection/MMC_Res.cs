@@ -33,7 +33,7 @@ namespace MementoConnection
         }
 
         public static long? GetUIDByFullName(string fullName) =>
-            MaxValue<long>("info_user", "uid", "FullName like '" +
+            MaxValue<long>("info_user", "uid", "FullName='" +
                 fullName.Replace("'", "''") + "' limit 1");
 
         public static long? GetUIDByEmail(string email) =>
@@ -135,8 +135,8 @@ namespace MementoConnection
                 uid = GetUIDByFullName(items["FullName"] as string);
             if (uid != null && uid > -1) return (int)uid;
             if (!Insert("info_user", items)) return -1;
-            int? value = MaxValue<int>("info_user", "uid");
-            return value is null ? -1 : (int)value;
+            long? value = MaxValue<long>("info_user", "uid");
+            return value is null ? -1 : (long)value;
         }
 
         public static bool InsertRes(string keys, string values)

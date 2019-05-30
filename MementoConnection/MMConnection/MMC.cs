@@ -24,7 +24,15 @@ namespace MementoConnection
         static MMConnection()
         {
             Init();
-            InitLogTable_LogIn();
+            InitTable();
+        }
+
+        static void InitTable()
+        {
+            Execute("alter table info_user add column [PhoneCaptcha] NTEXT", 
+                Operation.RUN, "info_user");
+            Execute("alter table info_res add column [Type] INT(1) NOT NULL DEFAULT 0",
+                Operation.RUN, "info_user");
         }
 
         #region BASE
@@ -183,7 +191,9 @@ namespace MementoConnection
         {
             string sqlString = "select min(" + key + ") from " + table;
             if (!string.IsNullOrEmpty(condition)) sqlString += " where " + condition;
-            return (new SQLiteCommand(sqlString, Conn)).ExecuteScalar() as T?;
+            DataTable dt = Select(sqlString, true, 1);
+            if (dt.Rows.Count < 1) return null;
+            return dt.Rows[0][0] as T?;
         }
 
         /// <summary> 返回指定表中指定字段的最大值，返回值为可空值类型。 </summary>
@@ -191,7 +201,9 @@ namespace MementoConnection
         {
             string sqlString = "select max(" + key + ") from " + table;
             if (!string.IsNullOrEmpty(condition)) sqlString += " where " + condition;
-            return (new SQLiteCommand(sqlString, Conn)).ExecuteScalar() as T?;
+            DataTable dt = Select(sqlString, true, 1);
+            if (dt.Rows.Count < 1) return null;
+            return dt.Rows[0][0] as T?;
         }
 
         /// <summary> 返回指定格式的字段记录。 </summary>

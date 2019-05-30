@@ -36,12 +36,6 @@ namespace Ran
             }
             if (AppLang == null) { AppLang = CultureInfo.InstalledUICulture.Name.ToLower(); }
             ChangeLanguage(AppLang);
-            if (!File.Exists(MementoPath.EmailTemplatesDirectory + @"\订单确认.txt"))
-                File.Copy(Environment.CurrentDirectory + @"\订单确认.txt",
-                    MementoPath.EmailTemplatesDirectory + @"\订单确认.txt");
-            if (!File.Exists(MementoPath.EmailTemplatesDirectory + @"\订单确认_Html.txt"))
-                File.Copy(Environment.CurrentDirectory + @"\订单确认_Html.txt",
-                    MementoPath.EmailTemplatesDirectory + @"\订单确认_Html.txt");
         }
 
         private static void CreateNewDataBase()

@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="680" d:DesignWidth="1392"
       Title="Page_Reservation" Background="White"
-      Initialized="Page_Initialized" Loaded="Page_Loaded">
+      Initialized="Page_Initialized">
     <Page.Resources>
         <ResourceDictionary Source="../PageResDictionary.xaml"/>
     </Page.Resources>
@@ -70,23 +70,23 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Visibility="Collapsed"
-                        Grid.Column="1"
-                        Grid.RowSpan="2">
-                <Button Content="发送"
+                        Grid.Row="1"
+                        Grid.Column="1">
+                <RibbonButton Label="发送"
                         VerticalAlignment="Center"
                         Visibility="Collapsed"
                         Click="EmailSendButton_Click"/>
-                <Button Content="地址 F1"
+                <RibbonButton Label="地址 F1"
                         Margin="0,0,15,0"
                         FontSize="20"
                         VerticalAlignment="Center"
                         Click="EmailAddressCopyButton_Click"/>
-                <Button Content="主题 F2"
+                <RibbonButton Label="主题 F2"
                         Margin="0,0,15,0"
                         FontSize="20"
                         VerticalAlignment="Center"
                         Click="EmailThemeCopyButton_Click"/>
-                <Button Content="正文 F3"
+                <RibbonButton Label="正文 F3"
                         Margin="0,0,30,0"
                         FontSize="20"
                         VerticalAlignment="Center"

@@ -37,7 +37,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="出生日期："/>
                     <DatePicker x:Name="dpBirth"
-                                SelectedDate="1361/02/01"/>
+                                SelectedDate="1316/06/09"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                             Margin="24,0,0,0">
