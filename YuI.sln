@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MOAB", "..\MOAB\MOAB\MOAB.c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gin", "Gin\Gin.csproj", "{18C3B1E6-7079-4CF8-A39E-31BF17A8E488}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledros", "Ledros\Ledros.csproj", "{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,18 +139,6 @@ Global
 		{18C3B1E6-7079-4CF8-A39E-31BF17A8E488}.Release|x64.Build.0 = Release|Any CPU
 		{18C3B1E6-7079-4CF8-A39E-31BF17A8E488}.Release|x86.ActiveCfg = Release|Any CPU
 		{18C3B1E6-7079-4CF8-A39E-31BF17A8E488}.Release|x86.Build.0 = Release|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Debug|x64.Build.0 = Debug|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Debug|x86.Build.0 = Debug|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Release|x64.ActiveCfg = Release|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Release|x64.Build.0 = Release|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Release|x86.ActiveCfg = Release|Any CPU
-		{201670C7-DEBF-4334-B20B-2C36DEAFBEE8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

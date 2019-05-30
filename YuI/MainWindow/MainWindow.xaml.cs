@@ -39,7 +39,6 @@ namespace YuI
             InitNotifyIcon();
             MainRibbon_SelectionChanged(null, null);
             InitializeControls();
-            Ledros.WPFClipboard.InitClipboardWatcher(this);
             this.StateChanged += MainWindow_StateChanged;
             this.Closed += RemoveNotifyIcon;
         }

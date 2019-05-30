@@ -19,7 +19,6 @@ using Feb;
 using IOExtension;
 using Ran;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace YuI
 {
@@ -38,6 +37,8 @@ namespace YuI
             DependencyProperty.Register("MementoAPTX", typeof(APTXItem), typeof(Page_Reservation), new PropertyMetadata(APTXItem.Master));
         
         BubbleBookingItemCollection _Bubbles;
+        ConceivingBookingItem _AliveBubble;
+        EXmlReader _XmlReader;
         FileSystemWatcher _HtmlFileSystemWatcher;
         Queue<string> _ErrorQueue = new Queue<string>();
         public string CommentString { get; private set; }
@@ -106,6 +107,11 @@ namespace YuI
             rlv_res.HideAllItemsMenuItemClicked += MenuHideBooking_Click;
             rlv_res.MarkSelectionsMenuItemClicked += MenuMarkBooking_Click;
             rlv_res.MarkAllItemsMenuItemClicked += MenuMarkBooking_Click;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            InitializeClipboardViewer();
         }
 
         /// <summary> 全称为'Get Nice Person Card'，当配置文件中Enabled值为0时可触发，使程序随机出错。 </summary>
@@ -754,6 +760,5 @@ namespace YuI
                     Bubble.Popup("哦豁", "邮件发送失败！");
             }));
         }
-        
     }
 }

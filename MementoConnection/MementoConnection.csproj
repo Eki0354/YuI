@@ -108,6 +108,7 @@
     <Compile Include="ELiteItem\ELiteResItem.cs" />
     <Compile Include="ELiteItem\ELiteResRoomItem.cs" />
     <Compile Include="EXmlDocument.cs" />
+    <Compile Include="EXmlReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MMConnection\MMC_Res.cs" />
     <Compile Include="MMConnection\MMC_Staff.cs" />

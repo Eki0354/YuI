@@ -110,14 +110,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Feb\bin\Debug\feb.dll</HintPath>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ledros\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -157,6 +157,7 @@
     </Compile>
     <Compile Include="MainWindow\MainWindow_NotifyIcon.cs" />
     <Compile Include="MainWindow\MainWindow_Timer.cs" />
+    <Compile Include="ResPage\Page_Res_Clipboard.cs" />
     <Compile Include="MainWindow\MainWindow_Menu.cs" />
     <Compile Include="MainWindow\MainWindow_Res.cs" />
     <Compile Include="MainWindow\MainWindow_Room.cs" />
@@ -178,6 +179,8 @@
     <Compile Include="SalePage\Page_Sale.xaml.cs">
       <DependentUpon>Page_Sale.xaml</DependentUpon>
     </Compile>
+    <Compile Include="res_js.cs" />
+    <Compile Include="Win32.cs" />
     <Page Include="EControls\YearMonthSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -321,10 +324,6 @@
     <ProjectReference Include="..\IOExtension\IOExtension.csproj">
       <Project>{c4ac35b5-3ccf-4f52-99ca-190a14fc24b9}</Project>
       <Name>IOExtension</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ledros\Ledros.csproj">
-      <Project>{201670c7-debf-4334-b20b-2c36deafbee8}</Project>
-      <Name>Ledros</Name>
     </ProjectReference>
     <ProjectReference Include="..\MementoConnection\MementoConnection.csproj">
       <Project>{50e673fa-efd7-46ca-8841-077930915b43}</Project>

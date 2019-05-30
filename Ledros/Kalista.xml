@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Kalista>
-  <String type="Param" method="Post" channel="Ctrip" goal="OrderToken">DateType=ALL&amp;DateStart=2019-03-26&amp;DateEnd=2019-04-26&amp;OrderType=ALL&amp;OrderStatus=0&amp;ReceiveType=&amp;OrderID=ResNumber&amp;RoomName=&amp;ClientName=&amp;BookingNo=&amp;IsGuarantee=false&amp;IsPP=false&amp;IsUrgent=false&amp;IsHoldRoom=false&amp;IsFreeSale=false&amp;IsCreditOrder=false&amp;IsBookingInvoice=false&amp;ConfirmName=&amp;AllinanceName=&amp;OrderBy=FormDate&amp;UnCheckInChecked=false&amp;TodayCheckInChecked=false&amp;TodayOrderChecked=false&amp;SourceType=Ebooking&amp;UnBookingInvoice=false&amp;PageIndex=1&amp;FlagID=0&amp;Method=QueryOrderList</String>
-  <String type="Port" method="Post" channel="Ctrip" goal="OrderToken">http://ebooking2.ctrip.com/ebkorder/Ajax/OrderAjax.ashx</String>
-  <String type="Param" method="Post" channel="Ctrip" goal="Order">Method=GetOrderDetial&amp;OrderKey=ResKey&amp;SourceType=1&amp;IgnoreReadLog=true&amp;Token=ResToken</String>
-  <String type="Port" method="Post" channel="Ctrip" goal="Order">http://ebooking2.ctrip.com/ebkorder/Ajax/OrderAjax.ashx</String>
-</Kalista>

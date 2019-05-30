@@ -71,7 +71,7 @@
     </Window.Resources>
     <Grid MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
         <Grid.Background>
-            <ImageBrush ImageSource="pack://siteoforigin:,,,/Images/cl_ushio.png"/>
+            <ImageBrush ImageSource="pack://siteoforigin:,,,/Images/body_kr_gray.png"/>
         </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>

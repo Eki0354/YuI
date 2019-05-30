@@ -18,7 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Ledros
+namespace YuI
 {
     /// <summary>
     /// This static class holds the Win32 function declarations and constants needed by

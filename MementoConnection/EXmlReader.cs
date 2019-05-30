@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.IO;
 
-namespace Ledros
+namespace MementoConnection
 {
     public class EXmlReader
     {

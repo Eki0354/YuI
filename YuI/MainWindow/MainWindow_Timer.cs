@@ -16,9 +16,6 @@ namespace YuI
 
         private static void _TimerBackupDBCallback(object state)
         {
-            if (!(Environment.MachineName.Contains("Reception") ||
-                Environment.MachineName.Contains("TravelDesk")))
-                return;
             if (!Directory.Exists(MementoPath.BackupDBToODDirectory))
                 Directory.CreateDirectory(MementoPath.BackupDBToODDirectory);
             File.Copy(MementoPath.MainDataBasePath, MementoPath.BackupDBToODFilePath, true);
