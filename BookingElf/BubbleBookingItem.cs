@@ -290,6 +290,11 @@ namespace BookingElf
                 State = this.State
             };
         }
+
+        public override string ToString()
+        {
+            return string.Format("Channel={0}\r\nResNumber={1}", this.Channel, this.ResNumber);
+        }
     }
 
     #endregion

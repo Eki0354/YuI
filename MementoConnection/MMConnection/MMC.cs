@@ -24,7 +24,7 @@ namespace MementoConnection
         static MMConnection()
         {
             Init();
-            InitLogTable_LogIn();
+            //InitLogTable_LogIn();
         }
 
         #region BASE

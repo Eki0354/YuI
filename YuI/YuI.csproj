@@ -85,7 +85,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Images\yui.ico</ApplicationIcon>
+    <ApplicationIcon>yui.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -155,6 +155,7 @@
     <Compile Include="EControls\YearMonthSelector.xaml.cs">
       <DependentUpon>YearMonthSelector.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainWindow\MainWindow_Hook.cs" />
     <Compile Include="MainWindow\MainWindow_NotifyIcon.cs" />
     <Compile Include="MainWindow\MainWindow_Timer.cs" />
     <Compile Include="ResPage\Page_Res_Clipboard.cs" />
@@ -358,6 +359,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\res_details.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="yui.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -71,7 +71,7 @@
     </Window.Resources>
     <Grid MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
         <Grid.Background>
-            <ImageBrush ImageSource="pack://siteoforigin:,,,/Images/body_kr_gray.png"/>
+            <ImageBrush ImageSource="pack://siteoforigin:,,,/Images/女巫与六便士.png"/>
         </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -184,7 +184,7 @@
                AllowsTransparency="True"
                PopupAnimation="Slide">
             <StackPanel Width="150" Background="#FFB9CED6" Orientation="Vertical">
-                <MenuItem x:Name="menu_signup" Click="menu_signup_Click" Header="{DynamicResource text_config_signup}" Height="22.8" Width="200">
+                <MenuItem x:Name="menu_signup" IsEnabled="False" Click="menu_signup_Click" Header="{DynamicResource text_config_signup}" Height="22.8" Width="200">
                     <MenuItem.Icon>
                         <Image Width="16" Height="16" Source="/Ran;component/Images/signup.ico" />
                     </MenuItem.Icon>

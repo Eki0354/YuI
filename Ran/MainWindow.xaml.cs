@@ -38,6 +38,11 @@ namespace Ran
         
         public static void UnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs e)
         {
+            SaveErrorLog(e.ExceptionObject.ToString());
+        }
+
+        public static void SaveErrorLog(string msg)
+        {
             try
             {
                 string logDirectory = Environment.CurrentDirectory + @"\Logs";
@@ -48,11 +53,11 @@ namespace Ran
                 using (FileStream fs = new FileStream(logPath, FileMode.OpenOrCreate))
                 {
                     StreamWriter sw = new StreamWriter(fs);
-                    sw.Write(e.ExceptionObject.ToString());
+                    sw.Write(msg);
                     sw.Close();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }

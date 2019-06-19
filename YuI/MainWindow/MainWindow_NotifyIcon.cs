@@ -14,13 +14,12 @@ namespace YuI
 
         NotifyIcon NotifyIcon;
         bool IsShining = false;
-
-
+        
         private void InitNotifyIcon()
         {
             this.NotifyIcon = new NotifyIcon
             {
-                BalloonTipText = "咕", //设置程序启动时显示的文本
+                BalloonTipText = "皆は予のように生き物を愛する、LOVE&PEACEのこころを持っていれば、全てうまくいくのになぁ～", //设置程序启动时显示的文本
                 Text = "Y u I",//最小化到托盘时，鼠标移动到图标上时显示的文本
                 Icon = new System.Drawing.Icon(System.Windows.Application.GetResourceStream(
                     new Uri("pack://application:,,,/Resources/Images/yui.ico")).Stream),//程序图标
@@ -28,7 +27,7 @@ namespace YuI
             };
 
             //右键菜单--打开菜单项
-            MenuItem menuOpen = new MenuItem("显示主界面");
+            MenuItem menuOpen = new MenuItem("签订契约！");
             menuOpen.Click += ShowWindow;
             //右键菜单--退出菜单项
             MenuItem menuExit = new MenuItem("退出");
@@ -39,7 +38,7 @@ namespace YuI
             NotifyIcon.ContextMenu = new ContextMenu(childen);
 
             NotifyIcon.MouseDoubleClick += OnNotifyIconDoubleClick;
-            this.NotifyIcon.ShowBalloonTip(1000);
+            this.NotifyIcon.ShowBalloonTip(2000);
         }
 
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
@@ -58,15 +57,15 @@ namespace YuI
 
         private void ShowWindow(object sender, EventArgs e)
         {
-            this.Visibility = Visibility.Visible;
-            this.ShowInTaskbar = true;
+            this.Show();
+            this.WindowState = WindowState.Normal;
             this.Activate();
+            this.Focus();
         }
 
         private void HideWindow(object sender, EventArgs e)
         {
-            this.ShowInTaskbar = false;
-            this.Visibility = Visibility.Hidden;
+            this.Hide();
         }
 
         private void CloseWindow(object sender, EventArgs e)

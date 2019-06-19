@@ -64,9 +64,14 @@ namespace MementoConnection
         public static bool IsResExisted(string resNumber) =>
             IsExisted("info_res", string.Format("ResNumber='{0}'", resNumber));
 
-        public static DataTable UnCheckedBubbleResSet=> Select(
+        public static DataTable UnCheckedBubbleResSet()
+        {
+            return Select(
             "select [id],State,Channel,ResNumber,FullName from info_res,info_user where " +
-                "IsChecked=0 and info_res.uid=info_user.uid order by info_res.id desc limit 100");
+            "RecordedDateTime<'" + DateTime.Now.AddDays(1).ToString("yyyy-MM-dd") +
+            "' and RecordedDateTime>'" + DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd") +
+                "' and IsChecked=0 and info_res.uid=info_user.uid order by info_res.id desc limit 100");
+        }
 
         public static DataTable FindResByResNumberOrFullName(string keyword)
         {
@@ -193,5 +198,10 @@ namespace MementoConnection
 
         #endregion
 
+        public static void FormatResRoomDate()
+        {
+            Execute("update info_res_rooms set ArrivalDate='1997-03-03',DepartureDate='1997-03-03' " +
+                "where ArrivalDate<'1997-03-03' or DepartureDate<'1997-03-03'");
+        }
     }
 }

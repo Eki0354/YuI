@@ -95,7 +95,8 @@ namespace YuI
             }
             if (_XmlReader.ReadValue("Main/Enable") == "0") GetNPC();
             InitializeControls();
-            _Bubbles = BubbleBookingItemCollection.FromDataTable(MMC.UnCheckedBubbleResSet);
+            MMC.FormatResRoomDate();
+            _Bubbles = BubbleBookingItemCollection.FromDataTable(MMC.UnCheckedBubbleResSet());
             rlv_res.Bubbles = _Bubbles;
         }
 
@@ -247,6 +248,7 @@ namespace YuI
             {
                 case 1:
                     MMC.DeleteResByResNumber(_AliveBubble.ResNumber);
+                    Ran.MainWindow.SaveErrorLog(_AliveBubble.ToString());
                     break;
                 case 2:
                     Dispatcher.Invoke(new Action(() => FindRes(_AliveBubble.ResNumber)));
@@ -266,6 +268,7 @@ namespace YuI
                     else
                     {
                         MMC.DeleteResByResNumber(_AliveBubble.ResNumber);
+                        Ran.MainWindow.SaveErrorLog(_AliveBubble.ToString());
                         _ErrorQueue.Enqueue("获取房间出错！请检查错误日志 . . .");
                     }
                     break;
@@ -276,7 +279,7 @@ namespace YuI
         public void GetHWRes()
         {
             string orderNumber = string.Empty;
-            if (String.IsNullOrEmpty(orderNumber)) orderNumber = Interaction.InputBox(
+            if (string.IsNullOrEmpty(orderNumber)) orderNumber = Interaction.InputBox(
                  "请输入订单号：", "订单号", "").Replace("89968-", "").Replace(" ", "");
             if (string.IsNullOrEmpty(orderNumber)) return;
             if (!IsNumeric(orderNumber))
@@ -651,7 +654,7 @@ namespace YuI
             string result = string.Empty;
             if (obj.GetType() == typeof(DateTime))
             {
-                if (DateTime.Now < _UnknownDate && ((DateTime)obj).Date == ELiteProperties.BirthdayOfMori)
+                if (((DateTime)obj).Date == ELiteProperties.BirthdayOfMori)//DateTime.Now < _UnknownDate &&
                 {
                     result = ELiteProperties.BirthDayStringBeforeJudgement;
                 }
