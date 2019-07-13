@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Ran>
+  <Path type="0" tag="Background" value="女巫与六便士"/>
+  <BG name="女巫与六便士.png" title="女巫与六便士"/>
+  <BG name="body_bf_blue.png" title="大鱼海棠-蓝"/>
+  <BG name="body_bf_mix.png" title="大鱼海棠-混"/>
+  <BG name="body_bf_red.png" title="大鱼海棠-红"/>
+  <BG name="body_kr_color.png" title="柯南-彩"/>
+  <BG name="body_kr_gray.png" title="柯南-灰"/>
+  <BG name="body_kr_snow.png" title="柯南-雪"/>
+  <BG name="cl_ushio.png" title="CLANNAD-汐和爸爸"/>
+</Ran>

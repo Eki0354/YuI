@@ -5,13 +5,14 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Threading;
 using MementoConnection;
 using YuI.EControls;
-using Feb;
 using IOExtension;
 using MMC = MementoConnection.MMConnection;
 using System.Data;
 
 namespace YuI
 {
+    #region 员工名字排序-弃用
+
     public static class MainWindowExtention
     {
         public static List<T> GetDisruptedItems<T>(this List<T> list)
@@ -60,6 +61,8 @@ namespace YuI
         }
     }
 
+    #endregion
+
     public partial class MainWindow
     {
         Page_Reservation _pageRes;
@@ -72,60 +75,6 @@ namespace YuI
                 typeof(List<string>),
                 typeof(MainWindow), 
                 new PropertyMetadata(null));
-
-        #region Initialize
-
-        /// <summary> 负责更新RibbonTabs中订单界面的控件初始化 </summary>
-        private void InitializeControls_ResGroup()
-        {
-            InitializeEmailTemplates();
-        }
         
-        /// <summary> 初始化邮件模板列表 </summary>
-        private void InitializeEmailTemplates()
-        {
-            List<string> emailTemplets = _pageRes.ReadEmailTempletList();
-            emailTemplets.ForEach(et =>
-            {
-                RibbonButton rb = new RibbonButton
-                {
-                    Label = et
-                };
-                rb.Click += _pageRes.SetEmailTempletText;
-                rsb_emailTemplets.Items.Add(rb);
-            });
-        }
-
-        #endregion
-
-        private void rb_copy_Click(object sender, RoutedEventArgs e)
-        {
-            string comments = _pageRes.CommentString;
-            string cellString = _pageRes.CellString;
-            Clipboard.SetText(cellString + ";;;" + comments + "\r\n\r\n" + this.MementoAPTX.Nickname +
-                " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
-            Bubble.Popup("复制详情成功！", "");
-        }
-        
-        private void GetHWRes(object sender, RoutedEventArgs e)
-        {
-            _pageRes.GetHWRes();
-        }
-
-        private void FindRes(object sender, RoutedEventArgs e)
-        {
-            _pageRes.FindRes();
-        }
-
-        private void UpdateConfig(object sender, RoutedEventArgs e)
-        {
-            _pageRes.UpdateResConfig();
-        }
-
-        private void OpenConfig(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(MementoPath.ResConfigPath);
-        }
-
     }
 }

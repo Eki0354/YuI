@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
@@ -13,6 +14,14 @@ namespace BookingElf
     {
         #region EventHandler
 
+        public delegate void CheckedMarkMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
+
+        public event CheckedMarkMenuItemClickHandle CheckedMarkMenuItemClicked;
+
+        public delegate void UncheckedMarkMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
+
+        public event UncheckedMarkMenuItemClickHandle UncheckedMarkMenuItemClicked;
+        
         public class BubblesChangedEventArgs : RoutedEventArgs
         {
             public List<BubbleBookingItem> ChangedBubbles { get; internal set; }
@@ -21,7 +30,7 @@ namespace BookingElf
         BubblesChangedEventArgs SelectionsChangedEventArgs = new BubblesChangedEventArgs();
 
         BubblesChangedEventArgs AllChangedEventArgs = new BubblesChangedEventArgs();
-
+        
         public delegate void DeleteMenuItemClickHandle(object sender, BubblesChangedEventArgs e);
 
         public event DeleteMenuItemClickHandle DeleteMenuItemClicked;
@@ -122,25 +131,9 @@ namespace BookingElf
 
         private void MarkItems(List<BubbleBookingItem> items, string header)
         {
-            items.ForEach(item =>
-            {
-                switch (header)
-                {
-                    case "修改":
-                        item.State = BubbleBookingState.Changed;
-                        break;
-                    case "取消":
-                        item.State = BubbleBookingState.Cancelled;
-                        break;
-                    case "无效":
-                        item.State = BubbleBookingState.Invalid;
-                        break;
-                    case "正常":
-                    default:
-                        item.State = BubbleBookingState.Normal;
-                        break;
-                }
-            });
+            var state = (BubbleBookingState)(
+                Math.Max(0, "正常修改取消无效已做".IndexOf(header) / 2));
+            items.ForEach(item => item.State = state);
         }
 
         #region MenuEvents
@@ -191,5 +184,20 @@ namespace BookingElf
             return index;
         }
 
+        private void CheckedMarkMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            GetMarkedSelections().ForEach(item =>
+            {
+                item.IsChecked = true;
+                Console.WriteLine(item.IsChecked);
+            });
+            CheckedMarkMenuItemClicked?.Invoke(sender, SelectionsChangedEventArgs);
+        }
+
+        private void UncheckedMarkMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            GetMarkedSelections().ForEach(item => item.IsChecked = false);
+            UncheckedMarkMenuItemClicked?.Invoke(sender, SelectionsChangedEventArgs);
+        }
     }
 }

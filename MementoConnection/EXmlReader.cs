@@ -231,5 +231,15 @@ namespace MementoConnection
 
         #endregion
 
+        public void ChangeHWPasswordTo(string password)
+        {
+            if (string.IsNullOrEmpty(password)) return;
+            InitializePath(this.FullPath);
+            var node = _Root.SelectSingleNode("HostelWorld/PostString");
+            string postString = node.InnerText;
+            int index = postString.LastIndexOf("=");
+            node.InnerText = postString.Substring(0, index + 1) + password;
+            this.Save();
+        }
     }
 }

@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using IOExtension;
+using System.Windows;
+using MMC = MementoConnection.MMConnection;
 
 namespace YuI
 {
     public partial class MainWindow
     {
-        /*static System.Threading.Timer TimerBackupDB = new System.Threading.Timer(
-            _TimerBackupDBCallback, null, 0, 600000);
+        static System.Threading.Timer _SuicideTimer = new System.Threading.Timer(
+            new System.Threading.TimerCallback(_Suicide), null, 0, 10000);
 
-        private static void _TimerBackupDBCallback(object state)
+        private static void _Suicide(object state)
         {
-            if (!Environment.UserName.Contains("Panda")) return;
-            if (!Directory.Exists(MementoPath.BackupDBToODDirectory))
-                Directory.CreateDirectory(MementoPath.BackupDBToODDirectory);
-            File.Copy(MementoPath.MainDataBasePath, MementoPath.BackupDBToODFilePath, true);
-            File.Copy(MementoPath.ResConfigPath, MementoPath.BackupRCToODFilePath, true);
-        }*/
+            if (App.IsSuicidable())
+            {
+                MainWindow.Pop("已切换至里世界，零点后返回。");
+                Environment.Exit(0);
+            }
+        }
+
     }
 }

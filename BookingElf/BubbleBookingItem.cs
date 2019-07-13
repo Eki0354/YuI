@@ -15,7 +15,8 @@ namespace BookingElf
         Normal,
         Changed,
         Cancelled,
-        Invalid
+        Invalid,
+        Checked
     }
 
     #region BubbleBookingItem
@@ -46,12 +47,23 @@ namespace BookingElf
             }
         }
         public bool IsSearchResult { get; set; } = false;
+        private bool isChecked = true;
+        public bool IsChecked
+        {
+            get { return isChecked; }
+            set
+            {
+                isChecked = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsChecked"));
+            }
+        }
 
-        public BubbleBookingItem(string channel, string fullName, string resNumber)
+        public BubbleBookingItem(string channel, string fullName, string resNumber, bool isChecked)
         {
             this.Channel = channel;
             this.FullName = fullName;
             this.ResNumber = resNumber;
+            this.IsChecked = isChecked;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -63,11 +75,13 @@ namespace BookingElf
                 BubbleBookingItem item = new BubbleBookingItem(
                     row["Channel"] as string,
                     row["FullName"] as string,
-                    row["ResNumber"] as string)
+                    row["ResNumber"] as string,
+                    (bool)row["IsChecked"])
                 {
                     IsSearchResult = isSearchResult,
                     State = (BubbleBookingState)Enum.Parse(typeof(BubbleBookingState), row["State"].ToString())
                 };
+                if (item.isChecked) item.State = BubbleBookingState.Checked;
                 return item;
             }
             catch
@@ -89,7 +103,7 @@ namespace BookingElf
 
         public BubbleBookingItem ToSearchResult()
         {
-            return new BubbleBookingItem(this.Channel, this.FullName, this.ResNumber)
+            return new BubbleBookingItem(this.Channel, this.FullName, this.ResNumber, this.IsChecked)
             {
                 State = this.State,
                 IsSearchResult = true
@@ -285,7 +299,7 @@ namespace BookingElf
 
         public BubbleBookingItem ToBubble()
         {
-            return new BubbleBookingItem(Channel, FullName, ResNumber)
+            return new BubbleBookingItem(Channel, FullName, ResNumber, false)
             {
                 State = this.State
             };

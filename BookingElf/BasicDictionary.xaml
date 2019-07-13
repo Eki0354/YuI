@@ -28,6 +28,10 @@
                             <Setter Property="Background" Value="#FFA2B1C8"/>
                             <Setter Property="Content" Value="取消"/>
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding State}" Value="Checked">
+                            <Setter Property="Background" Value="#FFE4721F"/>
+                            <Setter Property="Content" Value="已做"/>
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding State}" Value="Invalid">
                             <Setter Property="Background" Value="#FF950000"/>
                             <Setter Property="Content" Value="无效"/>

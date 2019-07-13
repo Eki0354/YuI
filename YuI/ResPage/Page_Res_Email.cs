@@ -52,9 +52,25 @@ namespace YuI
                 sb.Append(" at " + price + " CNY/Night" + new string[] { "", "/Person" }[Convert.ToInt32(rtIndex < 3)]);
                 IsSingleOrder = false;
             }
-            return ReadEmailTempletText(isHtml ? "订单确认_Html" : "订单确认").
-                Replace("RoomDetails", sb.ToString()).Replace("StaffName", staffName).
+            string emailTemplate = isHtml ? ReadHtmlEmailTemplate() :
+                MainWindow.ReadEmailTempletText("订单确认");
+            return emailTemplate.Replace("RoomDetails", sb.ToString())
+                .Replace("StaffName", staffName).
                 Replace("CustomerName", _InitializedName(Res.FullName));
+        }
+
+        public static string ReadHtmlEmailTemplate()
+        {
+            string et = "";
+            using (var fs = new FileStream(
+                IOExtension.MementoPath.BodyPath, FileMode.OpenOrCreate)) 
+            {
+                using (var sr = new StreamReader(fs))
+                {
+                    et = sr.ReadToEnd();
+                }
+            }
+            return et;
         }
 
         private string _InitializedName(string name)

@@ -14,6 +14,7 @@ using MMC = MementoConnection.MMConnection;
 using MementoConnection;
 using System.Data;
 using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 
 namespace Ran
 {
@@ -32,7 +33,6 @@ namespace Ran
         public MainWindow()
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionEventHandler);
-            SettingWindow.LoadSettings();
             InitializeComponent();
         }
         
@@ -65,7 +65,7 @@ namespace Ran
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.Owner is null) Application.Current.Shutdown();
+            ChangeBackground();
             InitAPTX();
         }
 
@@ -76,13 +76,13 @@ namespace Ran
             {
                 items.Add(APTXItem.FromDataRow(row));
             }
-            APTXItems = items.GetDisruptedAPTX();
-            Dictionary<string, string> passwords = SavedPasswordElf.ReadPasswords();
+            APTXItems = items;//.GetDisruptedAPTX();
+            /*Dictionary<string, string> passwords = SavedPasswordElf.ReadPasswords();
             items.ForEach(item =>
             {
                 if (passwords.ContainsKey(item.Nickname))
                     item.SavedPassword = passwords[item.Nickname];
-            });
+            });*/
         }
 
         private void MainGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -92,7 +92,7 @@ namespace Ran
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
+            
         }
 
         #region  加密、解密数据库
@@ -151,9 +151,10 @@ namespace Ran
             if(tbPassword.Password is string password && cbAccount.SelectedItem is APTXItem aptx &&
                 aptx.EqualsPassword(password))
             {
-                if (cbSavePassword.IsChecked == true)
-                    SavedPasswordElf.SavePassword(aptx.Nickname, password);
+                /*if (cbSavePassword.IsChecked == true && aptx.Identity < 1)
+                    SavedPasswordElf.SavePassword(aptx.Nickname, password);*/
                 MMC.LogIn(aptx.SID);
+                this.DialogResult = true;
                 this.Close();
             }
             else
@@ -171,9 +172,9 @@ namespace Ran
         //菜单项事件
         private void menu_signup_Click(object sender, RoutedEventArgs e)
         {
-            configPopup.IsOpen = false;
+            /*configPopup.IsOpen = false;
             RegisterWindow.Summon();
-            InitAPTX();
+            InitAPTX();*/
         }
         
         private void menu_forgotpassword_Click(object sender, RoutedEventArgs e)
@@ -183,10 +184,20 @@ namespace Ran
             fpPopup.IsOpen = true;
         }
 
+        private void ChangeBackground()
+        {
+            imageBrush_Background.ImageSource = new BitmapImage(
+                new Uri(string.Format("pack://siteoforigin:,,,/Images/{0}",
+                SettingWindow.GetSelectedBGName())));
+        }
+
         private void menu_options_Click(object sender, RoutedEventArgs e)
         {
             SettingWindow sw = new SettingWindow();
-            sw.ShowDialog();
+            if (sw.ShowDialog().GetValueOrDefault())
+            {
+                ChangeBackground();
+            }
         }
 
         private void menu_about_Click(object sender, RoutedEventArgs e)
@@ -211,6 +222,7 @@ namespace Ran
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            MMC.Close();
             this.Close();
         }
 
@@ -234,10 +246,24 @@ namespace Ran
         {
             if (sender is ComboBox cb)
             {
-                APTXItem aptx = cb.SelectedItem as APTXItem;
-                tbPassword.Password = aptx.SavedPassword;
+                if(cb.SelectedItem is APTXItem aptx)
+                {
+                    if (aptx.Identity > 0)
+                    {
+                        cbAutoLogin.IsEnabled = false;
+                        cbSavePassword.IsEnabled = false;
+                        tbPassword.Password = "";
+                    }
+                    else
+                    {
+                        cbAutoLogin.IsEnabled = true;
+                        cbSavePassword.IsEnabled = true;
+                        tbPassword.Password = aptx.SavedPassword;
+                    }
+                }
             }
         }
+
     }
     public class ImageButton : Button
     {

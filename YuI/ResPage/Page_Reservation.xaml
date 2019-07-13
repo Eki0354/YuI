@@ -13,90 +13,87 @@
     <Page.Resources>
         <ResourceDictionary Source="../PageResDictionary.xaml"/>
     </Page.Resources>
-    <DockPanel>
-        <Grid DockPanel.Dock="Left" Margin="5,0,0,0">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid Margin="5,0,0,0"
+              Grid.Column="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0"
-                       FontSize="20"
+            <TextBlock FontSize="20"
+                       Grid.Row="0"
                        Text="订单列表："
                        Foreground="#FF5D1325"/>
-            <elf:BubbleBookingListBox Grid.Row="1"
-                                 x:Name="rlv_res"/>
+            <WrapPanel Grid.Row="1"
+                       Orientation="Horizontal" 
+                       VerticalAlignment="Center"
+                       Margin="3,2,0,3">
+                <Button Content="搜索订单"
+                        Click="SearchButton_Click"/>
+                <Button Content="获取HW"
+                        Margin="2,0,2,0"
+                        Click="HWButton_Click"/>
+            </WrapPanel>
+            <elf:BubbleBookingListBox Grid.Row="2" x:Name="rlv_res"/>
         </Grid>
         <ListView x:Name="lvRes"
-                  DockPanel.Dock="Right"
+                  Grid.Column="2"
                   Visibility="Collapsed"
                   ItemContainerStyle="{DynamicResource ResInfoListViewItemStyle}"/>
-        <Grid DockPanel.Dock="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Row="0"
-                        Grid.Column="0"
-                        Orientation="Horizontal">
-                <TextBlock Text="已登录账号："
+        <Border Grid.Column="1"
+                BorderBrush="Black"
+                BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal">
+                    <TextBlock Text="已登录账号："
                                FontSize="16"
                                Foreground="#FF13255D"/>
-                <TextBlock Text="{Binding Path=MementoAPTX.Nickname,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=local:Page_Reservation}}"
+                    <TextBlock x:Name="tb_aptx" Text="{Binding Path=MementoAPTX.Nickname,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=local:Page_Reservation}}"
                                VerticalAlignment="Center"/>
-            </StackPanel>
-            <Grid Grid.Row="1"
-                  Grid.Column="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label Content="房型："
-                           Grid.Column="0"
+                </StackPanel>
+                <WrapPanel Grid.Row="1"
+                           Orientation="Horizontal">
+                    <Label Content="房型："
                        FontSize="20"
                        BorderBrush="Black"
                        BorderThickness="1"/>
-                <ComboBox x:Name="lb_resRooms"
-                              Grid.Column="1"
+                    <ComboBox x:Name="lb_resRooms"
                               MinWidth="132"
                               FontSize="20"
                               Foreground="#FF045D12"
                               SelectionChanged="lb_resRooms_SelectionChanged" />
-            </Grid>
-            <StackPanel x:Name="panelEmailCopyButtons"
+                </WrapPanel>
+                <StackPanel x:Name="panelEmailCopyButtons"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Visibility="Collapsed"
                         Grid.Column="1"
                         Grid.RowSpan="2">
-                <Button Content="发送"
+                    <Button Content="发送"
                         VerticalAlignment="Center"
                         Visibility="Collapsed"
                         Click="EmailSendButton_Click"/>
-                <Button Content="地址 F1"
-                        Margin="0,0,15,0"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        Click="EmailAddressCopyButton_Click"/>
-                <Button Content="主题 F2"
-                        Margin="0,0,15,0"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        Click="EmailThemeCopyButton_Click"/>
-                <Button Content="正文 F3"
-                        Margin="0,0,30,0"
-                        FontSize="20"
-                        VerticalAlignment="Center"
-                        Click="EmailBodyCopyButton_Click"/>
-            </StackPanel>
-        </Grid>
-        <DataGrid x:Name="dg_order_room" DockPanel.Dock="Right" Background="White"
+                </StackPanel>
+                <DataGrid Grid.Row="2"
+                          x:Name="dg_order_room"
+                          Background="White"
                           CanUserReorderColumns="False" CanUserResizeColumns="False"
                           CanUserResizeRows="False" CanUserSortColumns="False"
                           CanUserAddRows="False" FontSize="18">
-        </DataGrid>
-    </DockPanel>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
 </Page>

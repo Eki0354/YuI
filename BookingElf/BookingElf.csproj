@@ -47,6 +47,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BookingResItem.cs" />
     <Compile Include="BubbleBookingItem.cs" />
     <Compile Include="StateLable.cs" />
     <Page Include="BubbleBookingListBox.xaml">
@@ -66,6 +67,7 @@
     <Compile Include="BubbleBookingListBox.xaml.cs">
       <DependentUpon>BubbleBookingListBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FoodieElf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -90,6 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\isSearchResult.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\checkedMark.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

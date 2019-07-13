@@ -71,7 +71,7 @@
     </Window.Resources>
     <Grid MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
         <Grid.Background>
-            <ImageBrush ImageSource="pack://siteoforigin:,,,/Images/女巫与六便士.png"/>
+            <ImageBrush x:Name="imageBrush_Background"/>
         </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
@@ -118,12 +118,14 @@
                      SelectionBrush="#FF1673BF"
                      FontSize="16" Height="22.32"/>
                 <CheckBox Click="RemPassCheckBox_Click"
+                          Visibility="Hidden"
                           IsChecked="True"
                           x:Name="cbSavePassword"
                           Margin="0,20,0,0"
                           Content="{DynamicResource text_checkbox_rempw}"
                           HorizontalAlignment="Left"/>
                 <CheckBox Click="AutoCheckBox_Click"
+                          Visibility="Hidden"
                           IsEnabled="False"
                           x:Name="cbAutoLogin"
                           Margin="0,10,0,0"
@@ -196,7 +198,7 @@
                 </MenuItem>
                 <MenuItem x:Name="menu_options" Click="menu_options_Click" Header="{DynamicResource text_config_options}" Height="22.8" Width="200" Canvas.Top="45.6">
                     <MenuItem.Icon>
-                        <Image Width="16" Height="16" Source="/Ran;component/Images/settings.ico" />
+                        <Image Width="16" Height="16"/>
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem x:Name="menu_about"

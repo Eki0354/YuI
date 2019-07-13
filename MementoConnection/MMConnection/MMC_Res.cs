@@ -67,15 +67,15 @@ namespace MementoConnection
         public static DataTable UnCheckedBubbleResSet()
         {
             return Select(
-            "select [id],State,Channel,ResNumber,FullName from info_res,info_user where " +
+            "select [id],State,Channel,ResNumber,FullName,IsChecked from info_res,info_user where " +
             "RecordedDateTime<'" + DateTime.Now.AddDays(1).ToString("yyyy-MM-dd") +
             "' and RecordedDateTime>'" + DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd") +
-                "' and IsChecked=0 and info_res.uid=info_user.uid order by info_res.id desc limit 100");
+                "' and info_res.uid=info_user.uid order by info_res.id desc limit 100");
         }
 
         public static DataTable FindResByResNumberOrFullName(string keyword)
         {
-            return Select(string.Format("select [id],State,Channel,ResNumber,FullName from info_res,info_user where " +
+            return Select(string.Format("select [id],State,Channel,ResNumber,FullName,IsChecked from info_res,info_user where " +
                 "info_res.uid=info_user.uid and (ResNumber LIKE \'%{0}%\' OR " +
                 "FullName LIKE \'%{0}%\')", keyword));
         }
@@ -133,15 +133,16 @@ namespace MementoConnection
                     ((char)Convert.ToInt32(name.Substring(i0 + 2, i1 - i0 - 2))) +
                     name.Substring(i1 + 1);
             }
-            long? uid = null;
+            //判断uid是否存在
+            /*long? uid = null;
             if (items.ContainsKey("Email"))
                 GetUIDByEmail(items["Email"] as string);
             if (uid is null)
                 uid = GetUIDByFullName(items["FullName"] as string);
-            if (uid != null && uid > -1) return (int)uid;
+            if (uid != null && uid > -1) return (int)uid;*/
             if (!Insert("info_user", items)) return -1;
-            int? value = MaxValue<int>("info_user", "uid");
-            return value is null ? -1 : (int)value;
+            long? value = MaxValue<long>("info_user", "uid");
+            return value is null ? -1 : (long)value;
         }
 
         public static bool InsertRes(string keys, string values)

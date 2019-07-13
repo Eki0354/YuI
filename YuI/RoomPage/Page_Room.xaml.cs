@@ -35,6 +35,7 @@ namespace YuI
 
         private void UpdateSelectedRoomDataTable(DateTime date_from, DateTime date_to)
         {
+            return;
             ResRoomItems = new ELiteResRoomItemCollection(date_from, date_to);
             ResRoomItems.InitVisualItemSet();
             this.dg_room.ItemsSource = null;

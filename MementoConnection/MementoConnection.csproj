@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="DictionaryExtension.cs" />
     <Compile Include="KeyValuePairExtension.cs" />
+    <Compile Include="MementoItem\MementoResItem.cs" />
     <Compile Include="MMConnection\MMC.cs" />
     <Compile Include="MMConnection\MMC_Bed.cs" />
     <Compile Include="MMConnection\MMC_Ran.cs" />

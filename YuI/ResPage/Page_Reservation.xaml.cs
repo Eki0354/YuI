@@ -15,13 +15,17 @@ using MementoConnection;
 using MMC = MementoConnection.MMConnection;
 using System.Windows;
 using BookingElf;
-using Feb;
 using IOExtension;
 using Ran;
 using System.Threading.Tasks;
+using static BookingElf.BubbleBookingListBox;
+using FFElf;
+using Newtonsoft.Json;
 
 namespace YuI
 {
+    public enum CEs { None, Address, Theme, Body }
+
     public partial class Page_Reservation : Page
     {
         #region PROPERTY
@@ -36,9 +40,10 @@ namespace YuI
         public static readonly DependencyProperty MementoAPTXProperty =
             DependencyProperty.Register("MementoAPTX", typeof(APTXItem), typeof(Page_Reservation), new PropertyMetadata(APTXItem.Master));
         
+        public bool IsCERes { get; private set; } = false;
         BubbleBookingItemCollection _Bubbles;
         ConceivingBookingItem _AliveBubble;
-        EXmlReader _XmlReader;
+        public EXmlReader _XmlReader { get; set; }
         FileSystemWatcher _HtmlFileSystemWatcher;
         Queue<string> _ErrorQueue = new Queue<string>();
         public string CommentString { get; private set; }
@@ -55,10 +60,10 @@ namespace YuI
         {
             get
             {
-                string theme = _XmlReader.ReadValue("Email/EmailTheme");
-                if (rlv_res.SelectedItem == null ||
-                    (rlv_res.SelectedItem as BubbleBookingItem).Channel != "TrafficYouth") return theme;
-                theme = _XmlReader.ReadValue("Email/EmailTheme-TrafficYouth");
+                string theme = _XmlReader.ReadValue(
+                    (rlv_res.SelectedItem == null &&
+                    (rlv_res.SelectedItem as BubbleBookingItem).Channel == "TrafficYouth") ?
+                    "Email/EmailTheme-TrafficYouth" : "Email/EmailTheme");
                 return theme.Replace("StaffName", this.MementoAPTX.Nickname);
             }
         }
@@ -73,6 +78,17 @@ namespace YuI
                 return CommentString.Substring(startIndex + 7, endIndex - startIndex - 7);
             }
         }
+
+        public OutlookEmail GetEmail(bool isHtml)
+        {
+            string address = EmailAddress;
+            string theme = EmailTheme;
+            string body = BuildRoomDetails(MementoAPTX.Nickname, isHtml);
+            return (string.IsNullOrEmpty(address) || string.IsNullOrEmpty(theme) ||
+                string.IsNullOrEmpty(body)) ?
+                null : new OutlookEmail(address, theme, body);
+        }
+
         public BubbleBookingItem ActiveResItem => rlv_res.SelectedItem as BubbleBookingItem;
         DateTime _UnknownDate => DateTime.Parse(_XmlReader.ReadValue("Main/UnknownDate"));
 
@@ -90,7 +106,7 @@ namespace YuI
             }
             else
             {
-                Bubble.Popup("配置文件不存在！\r\n请检查是否已被删除。", "提示");
+                MainWindow.Pop("配置文件不存在！\r\n请检查是否已被删除。", "提示");
                 Environment.Exit(0);
             }
             if (_XmlReader.ReadValue("Main/Enable") == "0") GetNPC();
@@ -121,7 +137,7 @@ namespace YuI
             DateTime dt = DateTime.Now;
             if (dt.Date.Month != 2 && (dt.Day != 14 || dt.Day != 15))
             {
-                Bubble.Popup(_XmlReader.ReadValue("Main/ErrorText"), "提示");
+                MainWindow.Pop(_XmlReader.ReadValue("Main/ErrorText"), "提示");
                 Environment.Exit(0);
             }
         }
@@ -181,7 +197,18 @@ namespace YuI
         private void MenuMarkBooking_Click(object sender, BubbleBookingListBox.BubblesChangedEventArgs e)
         {
             MMCBat(new Action(() => e.ChangedBubbles.ForEach(
-                item => MMC.UpdateResState(item.ResNumber, (int)item.State))));
+                item =>
+                {
+                    if (item.State == BubbleBookingState.Checked)
+                    {
+                        MMC.UpdateResChecked(item.ResNumber, true);
+                    }
+                    else
+                    {
+                        MMC.UpdateResChecked(item.ResNumber, false);
+                        MMC.UpdateResState(item.ResNumber, (int)item.State);
+                    }
+                })));
         }
 
         private void MMCBat(Action operation)
@@ -192,7 +219,7 @@ namespace YuI
                 action.EndInvoke(result);
                 this.Dispatcher.Invoke(new Action(() =>
                 {
-                    Bubble.Popup("呼噜", "数据库同步完成！");
+                    MainWindow.Pop("呼噜", "数据库同步完成！");
                 }));
             }, null);
         }
@@ -209,33 +236,107 @@ namespace YuI
             int getTimes = 0;
             while (!isGetOK && getTimes < 3)
             {
+                text = string.Empty;
                 try
                 {
                     text = Clipboard.GetText();
-                    isGetOK = true;
                 }
                 catch
                 {
 
                 }
+                isGetOK = !string.IsNullOrEmpty(text);
                 getTimes++;
                 Thread.Sleep(100);
             }
             if (string.IsNullOrEmpty(text)) return;
-            foreach (string channel in _XmlReader.ReadValue("Main/Clip-WebSite").Split(','))
+            if (text.StartsWith("MementoRes"))
             {
-                if (text.IndexOf(_XmlReader.ReadValue(channel + "/ClipboardKeyword")) < 0) continue;
-                _AliveBubble = new ConceivingBookingItem() { Channel = channel };
-                if (_XmlReader.ReadValue(channel + "/IsNet") != "0")
-                {
-                    _AliveBubble.FullName = GetRegexValue(_XmlReader.ReadNode(channel + "/Reg-ResBalloon/FullName"), text);
-                    _AliveBubble.ResNumber = GetRegexValue(_XmlReader.ReadNode(channel + "/Reg-ResBalloon/ResNumber"), text);
-                    text = GetHttpHtml("HostelWorld", _AliveBubble.ResNumber);
-                }
-                GetRes(channel, text);
-                Clipboard.SetText(string.Empty);
-                break;
+                text = text.Substring("MementoRes=>".Length);
+                GetBookingRes(JsonConvert.DeserializeObject<BookingResItem>(text));
             }
+            else
+            {
+                foreach (string channel in _XmlReader.ReadValue("Main/Clip-WebSite").Split(','))
+                {
+                    if (text.IndexOf(_XmlReader.ReadValue(channel + "/ClipboardKeyword")) < 0) continue;
+                    _AliveBubble = new ConceivingBookingItem() { Channel = channel };
+                    if (_XmlReader.ReadValue(channel + "/IsNet") != "0")
+                    {
+                        _AliveBubble.FullName = GetRegexValue(_XmlReader.ReadNode(channel + "/Reg-ResBalloon/FullName"), text);
+                        _AliveBubble.ResNumber = GetRegexValue(_XmlReader.ReadNode(channel + "/Reg-ResBalloon/ResNumber"), text);
+                        text = GetHttpHtml("HostelWorld", _AliveBubble.ResNumber);
+                    }
+                    GetRes(channel, text);
+                    Clipboard.SetText(string.Empty);
+                    break;
+                }
+            }
+        }
+
+        public void GetBookingRes(BookingResItem resItem)
+        {
+            _AliveBubble = new ConceivingBookingItem()
+            {
+                Channel = "Booking",
+                ResNumber = resItem.ResInfo.ResNumber,
+                UID = MMC.InsertUser(resItem.UserInfo.ToDictionary())
+            };
+            if (_AliveBubble.UID == -1) { _AliveBubble = null; return; }
+            var resDict = resItem.ResInfo.ToDictionary();
+            resDict.Add("uid", _AliveBubble.UID);
+            resDict.Add("Channel", _AliveBubble.Channel);
+            int resResult = MMC.IsResExisted(_AliveBubble.ResNumber) ? 2 :
+                (MMC.InsertRes(resDict) ? 0 : 1);
+            switch (resResult)
+            {
+                case 1:
+                    MMC.DeleteResByResNumber(_AliveBubble.ResNumber);
+                    Ran.MainWindow.SaveErrorLog(_AliveBubble.ToString());
+                    break;
+                case 2:
+                    Dispatcher.Invoke(new Action(() => FindRes(_AliveBubble.ResNumber)));
+                    break;
+                default:
+                    /*_AliveBubble.ID = MMC.GetItem<long>("select id from info_res where ResNumber='" +
+                        _AliveBubble.ResNumber + "'") ?? -1;*/
+                    if (GetBookingRes_ResRoomItems(resItem))
+                    {
+                        Dispatcher.Invoke(new Action(() =>
+                        {
+                            FindRes(_AliveBubble.ResNumber);
+                            rlv_res.SelectedIndex = 0;
+                        }));
+                        _ErrorQueue.Enqueue("获取完毕！已加入左侧订单列表 . . .");
+                    }
+                    else
+                    {
+                        MMC.DeleteResByResNumber(_AliveBubble.ResNumber);
+                        Ran.MainWindow.SaveErrorLog(_AliveBubble.ToString());
+                        _ErrorQueue.Enqueue("获取房间出错！请检查错误日志 . . .");
+                    }
+                    break;
+            }
+            _AliveBubble = null;
+        }
+
+        public bool GetBookingRes_ResRoomItems(BookingResItem resItem)
+        {
+            bool result = true;
+            foreach(var ri in resItem.RoomInfo)
+            {
+                foreach(var dict in ri.ToDictionaryArry())
+                {
+                    var uid = MMC.GetUIDByFullName((string)dict["FullName"]);
+                    dict.Add("ResNumber", _AliveBubble.ResNumber);
+                    dict.Add("uid", uid);
+                    dict.Remove("FullName");
+                    result = MMC.InsertResRoom(dict);
+                    if (!result) break;
+                }
+                if (!result) break;
+            }
+            return result;
         }
 
         public void GetRes(string channel, string htmlText, string resNumber = null)
@@ -308,7 +409,8 @@ namespace YuI
             }
             else
             {
-                if (String.IsNullOrEmpty(_AliveBubble.FullName) || _AliveBubble.FullName == ELiteProperties.DefaultUserName)
+                if (String.IsNullOrEmpty(_AliveBubble.FullName) || 
+                    _AliveBubble.FullName == ELiteProperties.DefaultUserName)
                 {
                     string fullName = CombineFullName(userItemDict);
                     _AliveBubble.FullName = fullName.Length > 0 ? fullName : ELiteProperties.DefaultUserName;
@@ -478,44 +580,6 @@ namespace YuI
         }
 
         #endregion
-        
-        #region EmailTemplet
-
-        public List<string> ReadEmailTempletList()
-        {
-            string path = MementoPath.EmailTemplatesDirectory;
-            if (!Directory.Exists(path)) return null;
-            List<string> list = new List<string>();
-            int startIndex = 0;
-            int endIndex = 0;
-            foreach (string filePath in Directory.GetFiles(path))
-            {
-                startIndex = filePath.LastIndexOf("\\") + 1;
-                endIndex = filePath.LastIndexOf(".");
-                list.Add(filePath.Substring(startIndex, endIndex - startIndex));
-            }
-            return list;
-        }
-
-        public void SetEmailTempletText(object sender, RoutedEventArgs e)
-        {
-            RibbonButton mi = sender as RibbonButton;
-            Clipboard.SetText(ReadEmailTempletText(mi.Label));
-            Bubble.Popup("成功！", "已复制邮件模板：" + mi.Label);
-        }
-
-        public string ReadEmailTempletText(string name)
-        {
-            string path = string.Format(@"{0}\{1}.txt", 
-                MementoPath.EmailTemplatesDirectory, name);
-            string text;
-            FileStream fs = new FileStream(path, FileMode.Open);
-            text = new StreamReader(fs).ReadToEnd();
-            fs.Close();
-            return text;
-        }
-
-        #endregion
 
         #region Controls
 
@@ -555,16 +619,32 @@ namespace YuI
             #region COMMENT
 
             sqlString = "SELECT * FROM info_res,info_user WHERE ResNumber='" + res.ResNumber + "' and info_res.uid=info_user.uid";
-            DataTable dst = MMC.Select(sqlString);
-            if (dst is null || dst.Rows.Count < 1) return;
+            DataTable dst = null;
+            try
+            {
+                dst = MMC.Select(sqlString);
+                if (dst is null || dst.Rows.Count < 1) return;
+            }
+            catch
+            {
+                MMC.DeleteResByResNumber(res.ResNumber);
+                Dispatcher.Invoke(() =>
+                {
+                    rlv_res.Bubbles.RemoveAt(rlv_res.Bubbles.IndexOfResNumber(res.ResNumber));
+                });
+                Clipboard.SetText(string.Format("{0}-{1}", res.Channel, res.ResNumber));
+                MainWindow.Pop(string.Format("来源：{0}\r\n订单号：{1}\r\n" +
+                    "此订单信息有误，已删除。信息已复制到剪贴板，请重新获取。",
+                    res.Channel, res.ResNumber));
+                return;
+            }
             Dictionary<string, object> infos = new Dictionary<string, object>();
             for (int i = 0; i < dst.Columns.Count - 1; i++)
             {
                 infos.Add(dst.Columns[i].Caption, dst.Rows[0][i]);
             }
             lvRes.ItemsSource = infos;
-            panelEmailCopyButtons.Visibility = infos["Email"] is string email &&
-                email.Length > 0 ? Visibility.Visible : Visibility.Collapsed;
+            IsCERes = infos["Email"] is string email && email.Length > 0;
             sqlString = string.Format("SELECT {0} FROM info_res,info_user WHERE " +
                 "ResNumber='{1}' and info_res.uid=info_user.uid",
                 _XmlReader.ReadValue("Main/ShowKeywords"), res.ResNumber);
@@ -656,14 +736,14 @@ namespace YuI
             {
                 if (((DateTime)obj).Date == ELiteProperties.BirthdayOfMori)//DateTime.Now < _UnknownDate &&
                 {
-                    result = ELiteProperties.BirthDayStringBeforeJudgement;
+                    var unme = new Random();
+                    if (unme.Next(18) > 2)
+                        result = ELiteProperties.BirthDayStringBeforeJudgement;
                 }
                 else
                 {
-                    if (isForGrid)
-                        result = ((DateTime)obj).ToString("yyyy年MM月dd日");
-                    else
-                        result = ((DateTime)obj).ToString("yyyy/MM/dd");
+                    result = ((DateTime)obj).ToString(
+                        isForGrid ? "yyyy年MM月dd日" : "yyyy/MM/dd");
                 }
             }
             else
@@ -674,6 +754,13 @@ namespace YuI
         }
 
         #endregion
+
+        #region SearchBubble
+        
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            FindRes();
+        }
 
         public void FindRes(string keyword = null)
         {
@@ -696,72 +783,47 @@ namespace YuI
                 }
                 if (items.Count > 0)
                 {
-                    if (index > -1) rlv_res.SelectedIndex = index;
-                    Bubble.Popup("成功！", string.Format(
+                    if (index > -1)
+                    {
+                        rlv_res.SelectedIndex = 1;
+                        rlv_res.SelectedIndex = index;
+                    }
+                    MainWindow.Pop("成功！", string.Format(
                         "已找到关键字为[{0}]的历史订单！", keyword));
                 }
                 else
                 {
-                    Bubble.Popup("失败！", string.Format(
-                        "未找到关键字为[{0}]的历史订单！", keyword), BubbleStyle.Error);
+                    MainWindow.Pop("失败！", string.Format(
+                        "未找到关键字为[{0}]的历史订单！", keyword));
                 }
             }));
         }
-
-        #region EmailReply
-
-        public void EmailAddressCopyButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Clipboard.SetText(this.EmailAddress);
-                Bubble.Popup("成功！", "已复制邮箱地址");
-            }
-            catch
-            {
-                Bubble.Popup("失败！", "邮箱地址不能为空！", BubbleStyle.Error);
-            }
-        }
-
-        public void EmailThemeCopyButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Clipboard.SetText(this.EmailTheme);
-                Bubble.Popup("成功！", "已复制邮件主题");
-            }
-            catch
-            {
-                Bubble.Popup("失败！", "剪贴板出错！请再次尝试！", BubbleStyle.Error);
-            }
-        }
-
-        public void EmailBodyCopyButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Clipboard.SetText(this.BuildRoomDetails(this.MementoAPTX.Nickname));
-                Bubble.Popup("成功！", "已复制邮件正文");
-            }
-            catch
-            {
-                Bubble.Popup("失败！", "此来源网站的订单无法自动生成确认邮件", BubbleStyle.Error);
-            }
-        }
-
+        
         #endregion
-
+        
         public void EmailSendButton_Click(object sender, RoutedEventArgs e)
         {
             this.Dispatcher.Invoke(new Action(() =>
-                Bubble.Popup("咕咚", "开始发送邮件. . .")));
+                MainWindow.Pop("咕咚", "开始发送邮件. . .")));
             this.Dispatcher.Invoke(new Action(() =>
             {
                 if (this.SendMail())
-                    Bubble.Popup("叮咚", "邮件发送成功！");
+                    MainWindow.Pop("叮咚", "邮件发送成功！");
                 else
-                    Bubble.Popup("哦豁", "邮件发送失败！");
+                    MainWindow.Pop("哦豁", "邮件发送失败！");
             }));
+        }
+
+        private void HWButton_Click(object sender, RoutedEventArgs e)
+        {
+            GetHWRes();
+        }
+
+        public void SetResDetailsCopy()
+        {
+            Clipboard.SetText(CellString + ";;;" + CommentString +
+                "\r\n\r\n" + this.MementoAPTX.Nickname +
+                " " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
         }
     }
 }

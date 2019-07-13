@@ -39,13 +39,11 @@ namespace Ran
         }
 
         public bool EqualsPassword(string code) => GetEncryptedPassword(code + Salt) == Password;
-        
-        public static string GetEncryptedPassword(string currentText)
-        {
-            SHA256 hash = SHA256.Create();
-            byte[] s = hash.ComputeHash(Encoding.Unicode.GetBytes(currentText));
-            return Encoding.Unicode.GetString(s);
-        }
+
+        public static string GetEncryptedPassword(string currentText) =>
+            Encoding.Unicode.GetString(
+                SHA256.Create().ComputeHash(
+                    Encoding.Unicode.GetBytes(currentText)));
 
         public static APTXItem FromDataRow(DataRow row)
         {

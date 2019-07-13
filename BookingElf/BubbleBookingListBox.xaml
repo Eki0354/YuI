@@ -55,32 +55,35 @@
                                 <Grid Margin="2,10,2,10">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="10"/>
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
-                                    <Grid Margin="0,0,0,10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="16"/>
-                                        </Grid.ColumnDefinitions>
-                                        <local:StateLable Grid.Column="0"
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="16"/>
+                                    </Grid.ColumnDefinitions>
+                                    <local:StateLable Grid.Column="0"
                                                           HorizontalAlignment="Center"
                                                           VerticalAlignment="Center"
                                                           Style="{DynamicResource StateLabelStyle}"/>
-                                        <TextBlock Grid.Column="1"
+                                    <TextBlock Grid.Column="1"
+                                               Grid.Row="0"
                                                    Text="{Binding Channel}"
                                                    VerticalAlignment="Center"
                                                    FontSize="16"
                                                    Margin="5,0,0,0"
                                                    Foreground="#FF6D6F71"/>
-                                        <TextBlock Grid.Column="2"
+                                    <TextBlock Grid.Column="2"
+                                               Grid.Row="0"
                                                    Margin="5,0,5,0"
                                                    Text="{Binding DisplayRes}"
                                                    VerticalAlignment="Center"
                                                    HorizontalAlignment="Right"
                                                    Foreground="#FF6D6F71"/>
-                                        <Image x:Name="img"
+                                    <Image x:Name="img"
+                                               Grid.Row="0"
                                                Grid.Column="3"
                                                Visibility="Collapsed"
                                                Source="/Resources/Images/isSearchResult.ico"
@@ -88,8 +91,8 @@
                                                Height="16"
                                                HorizontalAlignment="Right"
                                                VerticalAlignment="Center"/>
-                                    </Grid>
-                                    <TextBlock Grid.Row="1"
+                                    <TextBlock Grid.Row="2"
+                                               Grid.ColumnSpan="3"
                                                FontSize="16"
                                            Text="{Binding DisplayName}"
                                            VerticalAlignment="Stretch"
@@ -158,10 +161,9 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
-                                    <WrapPanel Grid.Row="0"
+                                    <WrapPanel Grid.Row="1"
                                            Orientation="Horizontal"
-                                           VerticalAlignment="Center"
-                                           Margin="0,2,0,0">
+                                           VerticalAlignment="Center">
                                         <TextBlock Text="筛选：" VerticalAlignment="Center"/>
                                         <ComboBox IsReadOnly="True"
                                               VerticalAlignment="Center"
@@ -176,35 +178,43 @@
                                               Padding="{TemplateBinding Padding}">
                                         <ScrollViewer.ContextMenu>
                                             <ContextMenu>
+                                                <MenuItem x:Name="mi_markS"
+                                                          Header="标记选中">
+                                                    <MenuItem Header="已做"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="新订"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="修改"
+                                                              Background="LightGray"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="取消"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                    <MenuItem Header="无效"
+                                                              Background="LightGray"
+                                                              Click="MenuMarkSelections_Click"/>
+                                                </MenuItem>
+                                                <Separator/>
                                                 <MenuItem x:Name="mi_hideS"
                                                           Header="隐藏选中"
                                                           Click="MenuHideSelections_Click"/>
                                                 <Separator/>
                                                 <MenuItem x:Name="mi_hideL"
                                                           Header="隐藏列表"
+                                                          Background="LightGray"
                                                           Click="MenuHideAllItems_Click"/>
                                                 <Separator/>
-                                                <MenuItem x:Name="mi_markS"
-                                                          Header="标记选中">
-                                                    <MenuItem Header="新订"
-                                                              Click="MenuMarkSelections_Click"/>
-                                                    <MenuItem Header="修改"
-                                                              Click="MenuMarkSelections_Click"/>
-                                                    <MenuItem Header="取消"
-                                                              Click="MenuMarkSelections_Click"/>
-                                                    <MenuItem Header="无效"
-                                                              Click="MenuMarkSelections_Click"/>
-                                                </MenuItem>
-                                                <Separator/>
                                                 <MenuItem x:Name="mi_markL"
+                                                          Background="LightGray"
                                                       Header="标记列表">
                                                     <MenuItem Header="新订"
                                                               Click="MenuMarkAllItems_Click"/>
                                                     <MenuItem Header="修改"
+                                                              Background="LightGray"
                                                               Click="MenuMarkAllItems_Click"/>
                                                     <MenuItem Header="取消"
                                                               Click="MenuMarkAllItems_Click"/>
                                                     <MenuItem Header="无效"
+                                                              Background="LightGray"
                                                               Click="MenuMarkAllItems_Click"/>
                                                 </MenuItem>
                                                 <MenuItem Header="删除选中"

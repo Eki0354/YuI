@@ -11,10 +11,11 @@ namespace MementoConnection
     {
         public static DataTable GetStaffList => Select("select * from info_staff", false);
         
-        static void InitLogTable_LogIn()
+        static void InitStaffTable_MotoPassword()
         {
-            if (IsExistTable("log_staff")) return;
-            Execute(Properties.Resources.StringCreateLogTableStaff);
+            if (IsExisted("select * from sqlite_master where name ='info_staff'" +
+                " and sql like '%MotoPassword%'")) return;
+            Execute("alter table info_staff add column [MotoPassword] NTEXT");
         }
         
         public static void LogIn(int sid)

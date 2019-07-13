@@ -20,15 +20,23 @@ namespace MementoConnection
     public partial class MMConnection
     {
         static SQLiteConnection Conn;
-
+        
         static MMConnection()
         {
             Init();
-            //InitLogTable_LogIn();
+            Backup(null);
+            //InitStaffTable_MotoPassword();
+            //ClearTrashRes();
+        }
+
+        private static void ClearTrashRes()
+        {
+            DeleteResByResNumber("3984589175");
+            DeleteResByResNumber("3570775704");
         }
 
         #region BASE
-        
+
         public static void Init()
         {
             Conn = new SQLiteConnection();
@@ -47,16 +55,23 @@ namespace MementoConnection
             Conn = null;
         }
 
-        /// <summary> 扩展类，自动备份文件至目录下的Backup文件夹(不存在将自动新建)。 </summary>
-        public static void Backup(this SQLiteConnection conn)
+        public static void Backup(object state)
         {
-            string sourceFilePath = MementoPath.DataBaseDirectory;
-            string destFileDirectoryPath = Path.GetDirectoryName(sourceFilePath) + @"\Backup";
-            string destFilePath = destFileDirectoryPath +
-                DateTime.Now.ToString("yyyyMMdd HHmmss.fff") + ".bk";
-            if (!Directory.Exists(destFileDirectoryPath))
-                Directory.CreateDirectory(destFileDirectoryPath);
-            File.Copy(sourceFilePath, destFilePath, true);
+            if (Conn is null || Conn.State != ConnectionState.Open) return;
+            //if (!Environment.CurrentDirectory.Contains(MementoPath.OneDriveDirectory)) return;
+            if (!Directory.Exists(MementoPath.BackupDBToODDirectory))
+                Directory.CreateDirectory(MementoPath.BackupDBToODDirectory);
+            using (SQLiteConnection destConn = new SQLiteConnection())
+            {
+                SQLiteConnectionStringBuilder builder = new SQLiteConnectionStringBuilder()
+                {
+                    DataSource = MementoPath.BackupDBToODFilePath,
+                    Password = ""
+                };
+                destConn.ConnectionString = builder.ToString();
+                destConn.Open();
+                Conn.BackupDatabase(destConn, "main", "main", -1, null, 0);
+            };
         }
 
         public static void Bat(Action action)
@@ -81,8 +96,8 @@ namespace MementoConnection
 
         /// <summary> 判断符合条件的所有记录数。 </summary>
         public static int Count(string sqlString) =>
-            ((new SQLiteCommand(sqlString, Conn)).ExecuteScalar() as int?) ?? -1;
-            
+            Convert.ToInt32((new SQLiteCommand(sqlString, Conn)).ExecuteScalar());
+
         /// <summary> 判断符合条件的所有记录数。 </summary>
         public static int Count(
             string table, string condition) =>
